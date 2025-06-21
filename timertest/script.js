@@ -89,6 +89,7 @@ function updateProgressBar(percent) {
 function changeFavicon(src) {
   const favicon = document.getElementById("favicon");
   if (favicon) {
-    favicon.href = src;
+    const cacheBuster = new Date().getTime(); // unique each time
+    favicon.href = `${src}?v=${cacheBuster}`;
   }
 }
