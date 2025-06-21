@@ -11,15 +11,19 @@ function startCountdown(minutes) {
     countdownInterval = setInterval(updateCountdown, 1000);
 }
 
+
 function startCustomCountdown() {
-    const timeInput = document.getElementById("timeInput").value;
-    if (!timeInput || timeInput <= 0) {
-        alert("Please enter a valid number of minutes.");
-        document.getElementById("timeInput").style.border = "2px solid red";
-        return;
-    }
-    startCountdown(Number(timeInput));
+  const timeInput = document.getElementById("timeInput").value;
+  if (!timeInput || timeInput <= 0) {
+    alert("Please enter a valid number of minutes.");
+    document.getElementById("timeInput").style.border = "2px solid red";
+    return;
+  }
+  changeFavicon("AnvilOutlineLogo02red.png"); // 🔥 Activate forge mode!
+  startCountdown(Number(timeInput));
 }
+
+
 
 function updateCountdown() {
     const now = new Date().getTime();
@@ -55,6 +59,7 @@ function pauseCountdown() {
         clearInterval(countdownInterval);
         paused = true;
         document.getElementById("countdown").innerHTML += " (Paused)";
+        changeFavicon("AnvilOutlineLogo02.png");
     }
 }
 
@@ -63,6 +68,7 @@ function resumeCountdown() {
         paused = false;
         targetTime = new Date().getTime() + remainingTime;
         countdownInterval = setInterval(updateCountdown, 1000);
+        changeFavicon("AnvilOutlineLogo02red.png");
     }
 }
 
@@ -74,17 +80,15 @@ function resetCountdown() {
     remainingTime = 0;
     paused = false;
     elapsedMinutes = 0;
+    changeFavicon("AnvilOutlineLogo02.png");
 }
 
 function updateProgressBar(percent) {
     document.getElementById("progressBar").style.width = `${percent}%`;
 }
-function startCustomCountdown() {
-  changeFavicon("AnvilOutlineLogo02red.png");
-}
-function resetCountdown() {
-  changeFavicon("AnvilOutlineLogo02.png");
-}
-function pauseCountdown() {
-  changeFavicon("AnvilOutlineLogo02.png");
+function changeFavicon(src) {
+  const favicon = document.getElementById("favicon");
+  if (favicon) {
+    favicon.href = src;
+  }
 }
