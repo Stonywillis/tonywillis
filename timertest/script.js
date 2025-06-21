@@ -79,3 +79,12 @@ function resetCountdown() {
 function updateProgressBar(percent) {
     document.getElementById("progressBar").style.width = `${percent}%`;
 }
+function startCustomCountdown() {
+  changeFavicon("AnvilOutlineLogo02red.png");
+}
+function resetCountdown() {
+  changeFavicon("AnvilOutlineLogo02.png");
+}
+function pauseCountdown() {
+  changeFavicon("AnvilOutlineLogo02.png");
+}
