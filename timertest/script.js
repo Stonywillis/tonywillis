@@ -51,6 +51,7 @@ function updateCountdown() {
         clearInterval(countdownInterval);
         document.getElementById("countdown").innerHTML = "Time's up!";
         document.getElementById("alertSound").play();
+        changeFavicon("AnvilOutlineLogo02Green.png");
     }
 }
 
