@@ -1,0 +1,96 @@
+h1, h5, h3 {
+    font-family: 'Bungee Spice', sans-serif;
+    font-size: 4rem;
+}
+h5, h6 {
+    font-family: 'Bungee Spice', sans-serif;
+    font-size: 2rem;
+}
+h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 4rem;
+}
+h7 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+}
+a {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: orange; 
+    text-decoration: none; 
+}
+
+a:hover {
+    color: red; 
+    text-decoration: underline;
+}
+body {
+    font-family: 'Cinzel', serif;
+    text-align: center;
+    background-image: url("lava1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    background-color: black;
+    color: orange;
+    margin-top: 5%;
+}
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.panel {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
+  background: rgba(34, 34, 34, 0);
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  top: 0; left: 0;
+  transition: transform 0.6s cubic-bezier(0.77,0,0.175,1), opacity 0.6s;
+  opacity: 0;
+  transform: translateX(120%);
+  z-index: 1;
+}
+.panel-content.active {
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 2;
+  pointer-events: auto;
+}
+.panel-content.slide-out-left {
+  transform: translateX(-120%);
+  opacity: 0;
+}
+.panel-content.slide-in-right {
+  transform: translateX(120%);
+  opacity: 0;
+}
+.nav-button, .back-button {
+  margin: 1rem;
+  padding: 0;
+  font-size: 1.2rem;
+  background: none;
+  color: orange;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+.nav-button:hover, .back-button:hover {
+  color: red;
+  background: none;
+}
