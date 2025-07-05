@@ -94,3 +94,28 @@ body {
   color: red;
   background: none;
 }
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+@keyframes forge-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px #ff6f00) drop-shadow(0 0 2px #ff9000);
+  }
+  50% {
+    filter: drop-shadow(0 0 6px #ffaa00) drop-shadow(0 0 10px #ff6f00);
+  }
+}
+#forge-text {
+  animation: forge-glow 3s infinite ease-in-out;
+}
+#forge-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px; 
+}
+footer {
+  margin-top: 30px;
+}
