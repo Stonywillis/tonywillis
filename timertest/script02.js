@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       const panelContent = btn.closest('.panel-content');
       panelContent.classList.remove('active');
-      panelContent.classList.add('slide-out-left');
+      panelContent.classList.add('slide-out-right');
 
       // Slide menu content back in from left
       menuPanelContent.classList.remove('slide-out-left');
