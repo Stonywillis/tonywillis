@@ -14,6 +14,10 @@ h7 {
     font-family: 'Cinzel', serif;
     font-size: 1.5rem;
 }
+h8 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+}
 a {
     font-weight: bold;
     font-size: 1.2rem;
@@ -28,7 +32,7 @@ a:hover {
 body {
     font-family: 'Cinzel', serif;
     text-align: center;
-    background-image: url("lava1dark.jpg");
+    background-image: url("lava1.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
@@ -89,6 +93,7 @@ body {
   text-decoration: underline;
   font-weight: bold;
   transition: color 0.2s;
+
 }
 .nav-button:hover, .back-button:hover {
   color: red;
