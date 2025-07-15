@@ -143,16 +143,25 @@
 
     <section id="contact" class="panel content">
       <div class="panel-content">
-       <form action="https://formsubmit.co/stonywillis@gmail.com" method="POST">
-  <input type="text" name="name" placeholder="Your name" required>
-  <input type="email" name="email" placeholder="Your email" required>
-  <textarea name="message" placeholder="Your message" rows="1" required></textarea>
-  <button type="submit">Send Message</button>
-
-  <!-- Optional anti-spam -->
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://bonesforge.com/thankyou.html">
-</form>
+       <div class="container">
+  <h1>Contact Form</h1>
+  <form target="_blank" action="https://formsubmit.co/your@email.com" method="POST">
+    <div class="form-group">
+      <div class="form-row">
+        <div class="col">
+          <input type="text" name="name" class="form-control" placeholder="Full Name" required>
+        </div>
+        <div class="col">
+          <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <textarea placeholder="Your Message" class="form-control" name="message" rows="10" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-lg btn-dark btn-block">Submit Form</button>
+  </form>
+</div>
       <button class="back-button">Back to CV</button>
       </div>
     </section>
