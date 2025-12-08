@@ -2,6 +2,14 @@ h1, h2, h3 {
     font-family: 'Bungee Spice', sans-serif;
     font-size: 4rem;
 }
+h5 {
+    font-family: 'Bungee Spice', sans-serif;
+    font-size: 2rem;
+}
+h6 {
+    font-family: 'Bungee Spice', sans-serif;
+    font-size: 0.5rem;
+}
 a {
     font-weight: bold;
     font-size: 1.2rem;
@@ -104,3 +112,4 @@ ul {
 footer {
   margin-top: 30px;
 }
+
