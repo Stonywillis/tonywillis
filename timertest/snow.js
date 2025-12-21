@@ -1,7 +1,7 @@
 const snowContainer = document.getElementById("snow-container");
 
 // Tune these
-const MAX_FLAKES = 120;
+const MAX_FLAKES = 300;
 const SPAWN_INTERVAL_MS = 120;
 
 function createSnowflake() {
@@ -37,4 +37,5 @@ setInterval(createSnowflake, SPAWN_INTERVAL_MS);
 // Create a few instantly so it’s not empty at start
 for (let i = 0; i < 20; i++) {
   setTimeout(createSnowflake, Math.random() * 2000);
+
 }
