@@ -2,23 +2,16 @@ h1, h2, h3 {
     font-family: 'Bungee Spice', sans-serif;
     font-size: 4rem;
 }
-h5 {
-    font-family: 'Bungee Spice', sans-serif;
-    font-size: 2rem;
-}
-h6 {
-    font-family: 'Bungee Spice', sans-serif;
-    font-size: 0.5rem;
-}
+
 a {
     font-weight: bold;
     font-size: 1.2rem;
-    color: orange; 
-    text-decoration: none; 
+    color: orange;
+    text-decoration: none;
 }
 
 a:hover {
-    color: red; 
+    color: red;
     text-decoration: underline;
 }
 
@@ -92,6 +85,7 @@ ul {
         width: 95%;
     }
 }
+
 @keyframes forge-glow {
   0%, 100% {
     filter: drop-shadow(0 0 1px #ff6f00) drop-shadow(0 0 2px #ff9000);
@@ -100,16 +94,63 @@ ul {
     filter: drop-shadow(0 0 6px #ffaa00) drop-shadow(0 0 10px #ff6f00);
   }
 }
+
 #forge-text {
   animation: forge-glow 3s infinite ease-in-out;
 }
+
 #forge-footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px; 
+  margin-top: 40px;
 }
+
 footer {
   margin-top: 30px;
 }
 
+/* -------------------------------------------------- */
+/* ❄️ SNOWFALL CSS ADDED BELOW */
+/* -------------------------------------------------- */
+
+#snow-container {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.snowflake {
+    position: absolute;
+    top: -2rem;
+    color: #fff;
+    font-size: 0.6rem;
+    opacity: 0.9;
+    user-select: none;
+    will-change: transform;
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, alternate;
+}
+
+/* Vertical fall */
+@keyframes fall {
+    0% {
+        transform: translate3d(0, -5vh, 0);
+    }
+    100% {
+        transform: translate3d(0, 105vh, 0);
+    }
+}
+
+/* Horizontal wobble */
+@keyframes sway {
+    0% {
+        transform: translateX(-20px);
+    }
+    100% {
+        transform: translateX(20px);
+    }
+}
