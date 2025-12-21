@@ -9,9 +9,16 @@
 <link id="favicon" rel="icon" type="image/PNG" href="AnvilOutlineLogo02small.png"/>
 </head>
 <body>
-    <audio autoplay loop style="display:none;">
+    <audio id="forge-audio" autoplay loop style="display:none;">
   <source src="Jingle Bells - Merry Heavy Metal Christmas.m4a" type="audio/mp4">
 </audio>
+
+<script>
+  const audio = document.getElementById("forge-audio");
+  audio.volume = 0.3;
+</script>
+
+
     <button onclick="document.querySelector('audio').play()">Enable Sound</button>
     <img src="AnvilOutlineLogo02small.png" alt="Bones Forge">
     <h1>Merry Christmas Dan</h1>
@@ -65,5 +72,6 @@
 </body>
 </html>
 <!--   {]ccc(::::::::::::::::::::>
+
 
 
