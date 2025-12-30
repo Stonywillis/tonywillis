@@ -14,12 +14,12 @@
     
     <div>
         <input type="number" id="timeInput" placeholder="Enter minutes" min="1">
-        <button class="button2" onclick="startCustomCountdown()">Start Timer</button>
+        <button class="button2 interactive" onclick="startCustomCountdown()">Start Timer</button>
     </div>
     <div>
-        <button onclick="pauseCountdown()">Pause</button>
-        <button onclick="resumeCountdown()">Resume</button>
-        <button onclick="resetCountdown()">Reset</button>
+        <button class="interactive" onclick="pauseCountdown()">Pause</button>
+        <button class="interactive" onclick="resumeCountdown()">Resume</button>
+        <button class="interactive" onclick="resetCountdown()">Reset</button>
     </div>
     <div>
         <label for="toggleMinuteSound">Hammertime</label>
@@ -34,20 +34,18 @@
     <audio id="alertSound" src="gong.mp3"></audio>
     <audio id="minuteSound" src="hammer-strike.mp3"></audio>
 
-    <script src="script.js"></script>
-
     <nav>
         <ul>
-            <li><a href="main.html">Main</a></li>
-            <li><a href="main02.html">CV</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="search.html">Search</a></li>
-            <li><a href="Rand.html">Random Sequence Generator</a></li>
-            <li><a href="kat.html">Kat</a></li>
-            <li><a href="https://www.youtube.com/@Stonywillis">YouTube</a></li>
-            <li><a href="https://www.ebay.co.uk/usr/shamen-vo">eBay</a></li>
-            <li><a href="https://www.etsy.com/shop/BonesForge?ref=dashboard-header">Etsy Shop</a></li>
-            <li><a href="https://www.linkedin.com/in/tony-willis-5a0630356">Linkedin</a></li>
+            <li><a class="interactive" href="main.html">Main</a></li>
+            <li><a class="interactive" href="main02.html">CV</a></li>
+            <li><a class="interactive" href="contact.html">Contact</a></li>
+            <li><a class="interactive" href="search.html">Search</a></li>
+            <li><a class="interactive" href="Rand.html">Random Sequence Generator</a></li>
+            <li><a class="interactive" href="kat.html">Kat</a></li>
+            <li><a class="interactive" href="https://www.youtube.com/@Stonywillis">YouTube</a></li>
+            <li><a class="interactive" href="https://www.ebay.co.uk/usr/shamen-vo">eBay</a></li>
+            <li><a class="interactive" href="https://www.etsy.com/shop/BonesForge?ref=dashboard-header">Etsy Shop</a></li>
+            <li><a class="interactive" href="https://www.linkedin.com/in/tony-willis-5a0630356">Linkedin</a></li>
         </ul>
     </nav>
     <footer>
@@ -59,7 +57,8 @@
 </footer>
 <div id="snow-container"></div>
 
-  <script src="snow.js"></script>
+    <script src="script.js"></script>
+    <script src="snow.js"></script>
 
 </body>
 </html>
