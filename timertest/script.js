@@ -19,7 +19,7 @@ function startCustomCountdown() {
     document.getElementById("timeInput").style.border = "2px solid red";
     return;
   }
-  changeFavicon("AnvilOutlineLogo02red.png"); // 🔥 Activate forge mode!
+  changeFavicon("AnvilOutlineLogo02red.png"); // ðŸ”¥ Activate forge mode!
   startCountdown(Number(timeInput));
 }
 
@@ -94,3 +94,22 @@ function changeFavicon(src) {
     favicon.href = `${src}?v=${cacheBuster}`;
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const interactives = document.querySelectorAll('.interactive');
+
+    interactives.forEach(el => {
+        el.addEventListener('mousedown', () => {
+            document.body.classList.add('hammer-strike');
+            console.log("HAMMER DOWN"); // debug
+        });
+
+        el.addEventListener('mouseup', () => {
+            document.body.classList.remove('hammer-strike');
+            console.log("HAMMER UP"); // debug
+        });
+
+        el.addEventListener('mouseleave', () => {
+            document.body.classList.remove('hammer-strike');
+        });
+    });
+});
