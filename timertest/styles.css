@@ -32,7 +32,10 @@ body {
 .hammer-strike {
   cursor: url('HammericoHit.png') 6 26, auto !important;
 }
-
+body.hammer-strike,
+body.hammer-strike * {
+    cursor: url('HammericoHit.png') 6 26, auto !important;
+}
 
 #soundButton {
     background-color: #ff4500; 
@@ -175,4 +178,3 @@ footer {
         transform: translateX(20px);
     }
 }
-
