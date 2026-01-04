@@ -22,7 +22,7 @@ body {
     background-color: black;
     color: orange;
     margin-top: 5%;
-    cursor: url('HammericoFlat.png') 6 24, auto;
+    cursor: url('MetalIcoFree.png') 5 35, auto;
 }
 #smoke {
     position: fixed;
@@ -54,15 +54,15 @@ body {
 }
 
 .interactive:hover {
-  cursor: url('Hammerico.png') 6 16, auto;
+  cursor: url('MetalIcoHover.png') 5 35, auto;
 }
 
 .hammer-strike {
-  cursor: url('HammericoHit.png') 6 26, auto !important;
+  cursor: url('MetalIcoClick.png') 5 35, auto !important;
 }
 body.hammer-strike,
 body.hammer-strike * {
-    cursor: url('HammericoHit.png') 6 26, auto !important;
+    cursor: url('MetalIcoClick.png') 5 35, auto !important;
 }
 
 #soundButton {
