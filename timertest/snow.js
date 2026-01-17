@@ -2,7 +2,7 @@ const snowContainer = document.getElementById("snow-container");
 
 // Tune these
 const MAX_FLAKES = 300;
-const SPAWN_INTERVAL_MS = 120;
+const SPAWN_INTERVAL_MS = 100;
 
 function createSnowflake() {
   if (!snowContainer) return;
@@ -13,12 +13,12 @@ function createSnowflake() {
   flake.textContent = "✶"; // change to ❄ * · etc.
 
   const size = 0.4 + Math.random() * 1.3;       // rem
-  const fallDuration = 8 + Math.random() * 10;  // seconds
-  const swayDuration = 3 + Math.random() * 5;   // seconds
+  const fallDuration = 13 + Math.random() * 10;  // seconds
+  const swayDuration = 0 + Math.random() * 1;   // seconds
 
   flake.style.left = Math.random() * 100 + "vw";
   flake.style.fontSize = size + "rem";
-  flake.style.opacity = 0.4 + Math.random() * 0.6;
+  flake.style.opacity = 0.2 + Math.random() * 0.8;
 
   // Different durations so it feels organic
   flake.style.animationDuration = `${fallDuration}s, ${swayDuration}s`;
