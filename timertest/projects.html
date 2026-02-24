@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bones Forge Portfolio</title>
+    <link rel="stylesheet" href="styles.css?v=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Cinzel&display=swap" rel="stylesheet">
+<link id="favicon" rel="icon" type="image/PNG" href="AnvilOutlineLogo02small.png"/>
+</head>
+<body>
+    <div id="smoke"></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () =>{
+            let smoke = document.getElementById("smoke");
+
+            function getRandomColor() {
+                const colors = ["#B2BEB5", "#7393B3", "#36454F", "#A9A9A9", "#D3D3D3", "#C0C0C0", "#899499"];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            function createsmoke(e) {
+                let elem = document.createElement("div");
+                elem.classList.add("elem");
+
+                elem.style.left = `${e.clientX}px`;
+                elem.style.top = `${e.clientY}px`;
+                elem.style.background = `radial-gradient(circle, ${getRandomColor()} 0%, rgba(0, 0, 0, 0) 80%)`;
+                
+                smoke.appendChild(elem);
+                setTimeout(() => {
+                    elem.remove();
+                }, 1200);
+            }
+            document.body.addEventListener("mousemove", createsmoke);
+
+        });
+    </script>
+
+    <img src="AnvilOutlineLogo03small.png" alt="Bones Forge">
+    <h1>Tony Willis Portfolio</h1>
+    
+    <nav>
+        <ul>
+            <li><a class="interactive" href="https://governance.bonesforge.co.uk">Governance Compass</a></li>
+            <b>Purpose Governance Compass is a hands‑on, scenario‑driven guide to Azure governance.</b><br>         
+            <br>
+            <li><a class="interactive" href="search.html">Search</a></li>
+            <b>A custom Google search</b><br>
+            <br>
+            <li><a class="interactive" href="Rand.html">Random Sequence Generator</a></li>
+            <b>A random sequence generator I liberated from github</b><br>
+            <br>
+            <li><a class="interactive" href="main02.html">CV</a></li>
+            <b>My CV</b>
+        </ul>
+    </nav>
+    <footer>
+<svg viewBox="0 0 300 50" width="300" height="20">
+  <text id="forge-text" x="150" y="35" text-anchor="middle" font-size="32" fill="#ff6600">
+    Forged In The Cloud
+  </text>
+</svg>
+</footer>
+
+
+    <script src="script.js"></script>
+    <script src="snow.js"></script>
+
+</body>
+</html>
+<!--   {]ccc(::::::::::::::::::::>
+
+
+
+
+

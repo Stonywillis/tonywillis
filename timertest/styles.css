@@ -9,7 +9,12 @@ a {
     color: orange;
     text-decoration: none;
 }
-
+b {
+    font-weight: bold;
+    font-size: 1rem;
+    color: orange;
+    text-decoration: none;
+}
 
 
 body {
