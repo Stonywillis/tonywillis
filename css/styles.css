@@ -1,6 +1,87 @@
-h1, h2, h3 {
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main.container {
+    flex: 1; 
+}
+
+.logo-wrap img {
+    width: 100%;
+    max-width: 260px;      
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(255, 100, 0, 0.4));
+}
+.container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 60px;
+    padding: 20px 40px;
+}
+
+.left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+ .right {
+    width: 380px;      
+    display: flex;
+    flex-direction: column;
+    align-items: center;       
+    gap: 50px;               
+    margin-top: 20px;
+}
+
+.bio {
+    max-width: 700px;
+    padding-right: 20px;
+    padding-left: 10px;
+}
+
+.bio p {
+    line-height: 1.6;
+    margin-bottom: 1.6rem;
+    font-size: 1.05rem;
+}
+
+#nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;              
+    padding: 0;
+    margin: 0;
+}
+
+#nav a {
+    font-size: 1.35rem;
+    letter-spacing: 1px;
+}
+
+#nav a:hover {
+    text-shadow: 0 0 6px #ff6600;
+}
+
+h1 {
     font-family: 'Bungee Spice', sans-serif;
-    font-size: 4rem;
+    font-size: 2.7rem;          
+    letter-spacing: 2px;      
+    margin-bottom: 1.2rem;
+    margin-top: 0.5rem;      
+}
+
+h2, h3 {
+    font-family: 'Bungee Spice', sans-serif;
 }
 
 a {
@@ -9,6 +90,7 @@ a {
     color: orange;
     text-decoration: none;
 }
+
 b {
     font-weight: bold;
     font-size: 1rem;
@@ -16,11 +98,10 @@ b {
     text-decoration: none;
 }
 
-
 body {
     font-family: 'Cinzel', serif;
     text-align: center;
-    background-image: url("../images/lava1.jpg");
+    background-image: url("../images/lava1dark.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
@@ -68,64 +149,6 @@ body {
 body.hammer-strike,
 body.hammer-strike * {
     cursor: url('../images/MetalIcoClick.png') 5 35, auto !important;
-}
-
-#soundButton {
-    background-color: #ff4500; 
-    color: black;
-    font-weight: bold;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    margin: 20px auto;
-    display: block; 
-    box-shadow: 0 0 10px #ff4500, 0 0 20px #ff2200;
-    transition: 0.3s ease;
-}
-
-#soundButton:hover {
-    background-color: #ff2200;
-    box-shadow: 0 0 15px #ff6600, 0 0 30px #ff3300;
-    transform: scale(1.05);
-}
-
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 1rem;
-}
-
-.button2 {
-    background-color: #FF0000;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-}
-
-input {
-    padding: 5px;
-    font-size: 1rem;
-}
-
-#progressBarContainer {
-    width: 80%;
-    margin: 50px auto;
-    background-color: #333;
-    border-radius: 25px;
-}
-
-#progressBar {
-    width: 0;
-    height: 50px;
-    background-color: orange;
-    border-radius: 25px;
-}
-
-#countdown {
-    font-size: 2rem;
-    margin-top: 20px;
 }
 
 ul {
