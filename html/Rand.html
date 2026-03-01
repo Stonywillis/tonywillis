@@ -1,0 +1,78 @@
+<html>
+
+<HEAD>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <TITLE> Random Sequence Generator </TITLE>
+    <link rel="stylesheet" href="../css/styles.css?v=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Cinzel&display=swap" rel="stylesheet">
+    <link id="favicon" rel="icon" type="image/PNG" href="../images/AnvilOutlineLogo02small.png"/>
+
+<SCRIPT LANGUAGE="JavaScript" SRC="../logic/random.js"></SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript">
+  function generateRandSeq(len, letters)
+
+  {
+      var i, seq = "";
+      for (i = 1; i <= len; i = i + 1) {
+          seq += randomChar(letters);
+      }
+      return seq;
+  }
+</SCRIPT>
+</HEAD>
+
+<body>
+<CENTER>
+<H2>Random Sequence Generator</H2>
+
+<HR>
+
+<FORM NAME="generator">
+<TABLE>
+<TR>
+  <TD>Number of random sequences to generate:
+  <TD><INPUT TYPE="text" NAME="numSeq" SIZE=4 VALUE=1>
+<TR>
+  <TD>Length of each random sequence:
+  <TD><INPUT TYPE="text" NAME="lenSeq" SIZE=2 VALUE=3>
+<TR>
+  <TD>Letters to choose from:
+  <TD><INPUT TYPE="text" NAME="letters" SIZE=26 VALUE="abcdefghijklmnopqrstuvwxyz">
+</TABLE>
+
+<P>
+<INPUT TYPE="button" VALUE="Click to generate letter sequences"
+       ONCLICK="document.generator.output.value = '';
+                for(i=1;i<=document.generator.numSeq.value;i=i+1) {
+                  document.generator.output.value += 
+                        generateRandSeq(document.generator.lenSeq.value,
+                                        document.generator.letters.value) + ' ';
+                };">
+
+<P>
+<TEXTAREA NAME="output" ROWS=10 COLS=40 WRAP VALUE=""></TEXTAREA>
+</FORM>
+
+</CENTER>
+<nav>
+        <ul>
+            <li><a href="../html/index.html">Back to Home</a></li>          
+        </ul>
+    </nav>
+    <footer>
+<svg viewBox="0 0 300 50" width="300" height="20">
+  <text id="forge-text" x="150" y="35" text-anchor="middle" font-size="32" fill="#ff6600">
+    Forged In The Cloud
+  </text>
+</svg>
+</footer>
+<h6>Code Stolen From Dave Reed</h6>
+</body>
+</html>
+<!--   {]ccc(::::::::::::::::::::>
+
+
+
+

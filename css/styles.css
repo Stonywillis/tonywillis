@@ -1,0 +1,210 @@
+h1, h2, h3 {
+    font-family: 'Bungee Spice', sans-serif;
+    font-size: 4rem;
+}
+
+a {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: orange;
+    text-decoration: none;
+}
+b {
+    font-weight: bold;
+    font-size: 1rem;
+    color: orange;
+    text-decoration: none;
+}
+
+
+body {
+    font-family: 'Cinzel', serif;
+    text-align: center;
+    background-image: url("../images/lava1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    background-color: black;
+    color: orange;
+    margin-top: 5%;
+    cursor: url('../images/MetalIcoFree.png') 5 35, auto;
+}
+#smoke {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.elem {
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 0) 80%);
+    pointer-events: none;
+    animation: animate 1s ease-out forwards;
+}
+
+@keyframes animate {
+    0% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(10) translateY(-10px);
+        opacity: 0;
+    }
+}
+
+.interactive:hover {
+  cursor: url('../images/MetalIcoHover.png') 5 35, auto;
+}
+
+.hammer-strike {
+  cursor: url('../images/MetalIcoClick.png') 5 35, auto !important;
+}
+body.hammer-strike,
+body.hammer-strike * {
+    cursor: url('../images/MetalIcoClick.png') 5 35, auto !important;
+}
+
+#soundButton {
+    background-color: #ff4500; 
+    color: black;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    display: block; 
+    box-shadow: 0 0 10px #ff4500, 0 0 20px #ff2200;
+    transition: 0.3s ease;
+}
+
+#soundButton:hover {
+    background-color: #ff2200;
+    box-shadow: 0 0 15px #ff6600, 0 0 30px #ff3300;
+    transform: scale(1.05);
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+.button2 {
+    background-color: #FF0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+input {
+    padding: 5px;
+    font-size: 1rem;
+}
+
+#progressBarContainer {
+    width: 80%;
+    margin: 50px auto;
+    background-color: #333;
+    border-radius: 25px;
+}
+
+#progressBar {
+    width: 0;
+    height: 50px;
+    background-color: orange;
+    border-radius: 25px;
+}
+
+#countdown {
+    font-size: 2rem;
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+    #progressBarContainer {
+        width: 95%;
+    }
+}
+
+@keyframes forge-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px #ff6f00) drop-shadow(0 0 2px #ff9000);
+  }
+  50% {
+    filter: drop-shadow(0 0 6px #ffaa00) drop-shadow(0 0 10px #ff6f00);
+  }
+}
+
+#forge-text {
+  animation: forge-glow 3s infinite ease-in-out;
+}
+
+#forge-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+footer {
+  margin-top: 30px;
+}
+
+
+#snow-container {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.snowflake {
+    position: absolute;
+    top: -2rem;
+    color: white;
+    font-size: 0.6rem;
+    opacity: 0.9;
+    user-select: none;
+    will-change: transform;
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, alternate;
+}
+
+
+@keyframes fall {
+    0% {
+        transform: translate3d(0, -5vh, 0);
+    }
+    100% {
+        transform: translate3d(0, 105vh, 0);
+    }
+}
+
+
+@keyframes sway {
+    0% {
+        transform: translateX(-20px);
+    }
+    100% {
+        transform: translateX(20px);
+    }
+}
