@@ -19,6 +19,14 @@ main.container {
     display: block;
     filter: drop-shadow(0 0 10px rgba(255, 100, 0, 0.4));
 }
+
+.portfolio-img {
+    width: 100%;
+    max-width: 200px;   
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 6px;
+}
 .container {
     display: flex;
     justify-content: flex-start;
