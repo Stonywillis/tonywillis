@@ -51,7 +51,7 @@ function updateCountdown() {
         clearInterval(countdownInterval);
         document.getElementById("countdown").innerHTML = "Time's up!";
         document.getElementById("alertSound").play();
-        changeFavicon("../images/AnvilOutlineLogo02Green.png");
+        changeFavicon("AnvilOutlineLogo02Green.png");
     }
 }
 
@@ -60,7 +60,7 @@ function pauseCountdown() {
         clearInterval(countdownInterval);
         paused = true;
         document.getElementById("countdown").innerHTML += " (Paused)";
-        changeFavicon("../images/AnvilOutlineLogo02.png");
+        changeFavicon("AnvilOutlineLogo02.png");
     }
 }
 
@@ -69,7 +69,7 @@ function resumeCountdown() {
         paused = false;
         targetTime = new Date().getTime() + remainingTime;
         countdownInterval = setInterval(updateCountdown, 1000);
-        changeFavicon("../images/AnvilOutlineLogo02red.png");
+        changeFavicon("AnvilOutlineLogo02red.png");
     }
 }
 
@@ -81,7 +81,7 @@ function resetCountdown() {
     remainingTime = 0;
     paused = false;
     elapsedMinutes = 0;
-    changeFavicon("../images/AnvilOutlineLogo02.png");
+    changeFavicon("AnvilOutlineLogo02.png");
 }
 
 function updateProgressBar(percent) {

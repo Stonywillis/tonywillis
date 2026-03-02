@@ -36,7 +36,7 @@ a:hover {
 body {
     font-family: 'Cinzel', serif;
     text-align: center;
-    background-image: url("../images/lava1dark.jpg");
+    background-image: url("lava1dark.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
