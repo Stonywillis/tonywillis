@@ -95,28 +95,28 @@ h2, h3 {
 a {
     font-weight: bold;
     font-size: 1.2rem;
-    color: orange;
+    color: rgb(210, 100, 0);
     text-decoration: none;
 }
 
 b {
     font-weight: bold;
     font-size: 1rem;
-    color: orange;
+    color: rgb(210, 100, 0);
     text-decoration: none;
 }
 
 body {
     font-family: 'Cinzel', serif;
     text-align: center;
-    background-image: url("lava1dark.jpg");
+    background-image: url("lava1darker.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
     background-color: black;
-    color: orange;
+    color: rgb(210, 100, 0);
     margin-top: 5%;
-    cursor: url('MetalIcoFree.png') 5 35, auto;
+    cursor: url('pointer.png') 2 3, auto;
 }
 #smoke {
     position: fixed;
@@ -148,15 +148,15 @@ body {
 }
 
 .interactive:hover {
-  cursor: url('MetalIcoHover.png') 5 35, auto;
+  cursor: url('pointerhand.png') 12 3, auto;
 }
 
 .hammer-strike {
-  cursor: url('MetalIcoClick.png') 5 35, auto !important;
+  cursor: url('pointerhand.png') 12 3, auto !important;
 }
 body.hammer-strike,
 body.hammer-strike * {
-    cursor: url('MetalIcoClick.png') 5 35, auto !important;
+    cursor: url('pointerhand.png') 12 3, auto !important;
 }
 
 ul {

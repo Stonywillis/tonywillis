@@ -25,24 +25,29 @@ h8 {
 a {
     font-weight: bold;
     font-size: 1.2rem;
-    color: orange; 
+    color: rgb(210, 100, 0); 
     text-decoration: none; 
 }
 
 a:hover {
-    color: red; 
     text-decoration: underline;
+    text-shadow: 0 0 6px #ff6600;
+    cursor: url('pointerhand.png') 12 3, auto;
 }
+
+
+
 body {
     font-family: 'Cinzel', serif;
     text-align: center;
-    background-image: url("lava1dark.jpg");
+    background-image: url("lava1darker.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
     background-color: black;
-    color: orange;
+    color: rgb(210, 100, 0);
     margin-top: 5%;
+    cursor: url('pointer.png') 2 3, auto;
 }
 .container {
   position: relative;
@@ -90,7 +95,7 @@ body {
   padding: 0;
   font-size: 1.2rem;
   background: none;
-  color: orange;
+  color: rgb(210, 100, 0);
   border: none;
   border-radius: 0;
   cursor: pointer;
@@ -102,6 +107,7 @@ body {
 .nav-button:hover, .back-button:hover {
   color: red;
   background: none;
+  cursor: url('pointerhand.png') 12 3, auto;
 }
 ul {
     list-style-type: none;
@@ -116,6 +122,7 @@ ul {
     filter: drop-shadow(0 0 6px #ffaa00) drop-shadow(0 0 10px #ff6f00);
   }
 }
+
 #forge-text {
   animation: forge-glow 3s infinite ease-in-out;
 }
