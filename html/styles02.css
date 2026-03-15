@@ -7,19 +7,19 @@ h5, h6 {
     font-size: 2rem;
 }
 h2 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Skandia', sans-serif;
     font-size: 4rem;
 }
 h4 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Skandia', sans-serif;
     font-size: 1.6rem;
 } 
 h7 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Skandia', sans-serif;
     font-size: 1.4rem;
 }
 h8 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Skandia', sans-serif;
     font-size: 1rem;
 }
 a {
@@ -38,7 +38,7 @@ a:hover {
 
 
 body {
-    font-family: 'Cinzel', serif;
+    font-family: 'Skandia', sans-serif;
     text-align: center;
     background-image: url("lava1darker.jpg");
     background-size: cover;
