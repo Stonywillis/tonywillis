@@ -22,6 +22,11 @@ html, body {
     border-radius: 8px;
 }
 
+img {
+    width: 250px;
+    height: 200px;
+}
+
 header {
     text-align: center;
     border-bottom: 3px solid #FFA500;
