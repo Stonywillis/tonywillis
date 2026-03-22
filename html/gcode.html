@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rectangle G-code Generator</title>
+    <link rel="stylesheet" href="style.css?v=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Cinzel&display=swap" rel="stylesheet">
+    <link id="favicon" rel="icon" type="image/PNG" href="AnvilOutlineLogo02small.png"/>
+
+    
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+</head>
+<body>
+
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="name-and-image">
+                    <h1>Tony Willis</h1>
+                    <div class="image-section">
+                        <img src="AnvilOutlineLogo02small.png" alt="Bones Forge Logo">
+                    </div>
+                </div>
+                <p class="tagline">Azure Cloud Administrator | Infrastructure Automation & Optimization</p>
+            </div>
+        </div>
+    </header>
+
+    
+    <nav>
+        <div class="container">
+            <a href="https://bonesforge.co.uk">Home</a>
+            <a href="#rectangle-generator">Rectangle G-code Generator</a>
+            <a href="#interpolation-generator">Interpolation G-code Generator</a>
+            <a href="#hexagon-generator">Hexagon G-code Generator</a>
+        </div>
+    </nav>
+
+
+    <main>
+        <section id="rectangle-generator">
+            <div class="container">
+                <h2>Rectangle G-code Generator</h2>
+                <p>Enter your parameters below to generate G-code for a simple rectangle.</p>
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+                        <py-script>
+import js
+from pyscript import display
+
+def generate_rectangle_gcode(event):
+    try:
+        # Get values from HTML input elements
+        tool_no = js.document.getElementById("rect-tool-no").value
+        tool_dia = float(js.document.getElementById("rect-tool-dia").value)
+        tool_rad = tool_dia / 2
+        
+        wrk_ofset = js.document.getElementById("rect-work-offset").value
+        spdle_rpm = js.document.getElementById("rect-spindle-rpm").value
+        
+        x_pos = float(js.document.getElementById("rect-x-position").value)
+        y_pos = float(js.document.getElementById("rect-y-position").value)
+        
+        z_rapid = float(js.document.getElementById("rect-z-rapid").value)
+        z_start = float(js.document.getElementById("rect-z-start").value)
+        
+        z_cut = float(js.document.getElementById("rect-z-cut").value)
+        nosteps = int(js.document.getElementById("rect-nosteps").value)
+        
+        x_dist = float(js.document.getElementById("rect-x-distance").value)
+        x_cut = x_dist / 2
+        
+        y_dist = float(js.document.getElementById("rect-y-distance").value)
+        y_cut = y_dist / 2
+        
+        con_rad = float(js.document.getElementById("rect-corner-radius").value)
+        lead_in = float(js.document.getElementById("rect-lead-in").value)  
+        
+        feedrate = float(js.document.getElementById("rect-feed-rate").value)
+
+        # --- G-code generation logic based on provided Python script ---
+        gcode_lines = []
+        gcode_lines.append("Welcome to Tonys Basic Rectangle G-Code Creator")
+        gcode_lines.append("Generating G-code...")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 P{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+        gcode_lines.append(f"G00 X{x_pos - lead_in:.2f} Y{y_cut + tool_rad + lead_in:.2f}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
+        gcode_lines.append(f"M97 P301 L{nosteps}")
+        gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
+        gcode_lines.append(f"G00 Z{z_rapid} M09")
+        gcode_lines.append("M05")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M30")
+
+        gcode_lines.append("N301")
+        gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}")
+        gcode_lines.append(f"G90 G03 X{x_pos:.2f} Y{y_cut + tool_rad:.2f} R{lead_in:.2f} F{feedrate:.2f}")
+        gcode_lines.append(f"G01 X{x_cut - con_rad:.2f}")
+        gcode_lines.append(f"G02 X{x_cut + tool_rad:.2f} Y{y_cut - con_rad:.2f} R{tool_rad + con_rad:.2f}")
+        gcode_lines.append(f"G01 Y-{y_cut - con_rad:.2f}")
+        gcode_lines.append(f"G02 X{x_cut - con_rad:.2f} Y-{y_cut + tool_rad:.2f} R{tool_rad + con_rad:.2f}")
+        gcode_lines.append(f"G01 X-{x_cut - con_rad:.2f}")
+        gcode_lines.append(f"G02 X-{x_cut + tool_rad:.2f} Y-{y_cut - con_rad:.2f} R{tool_rad + con_rad:.2f}")
+        gcode_lines.append(f"G01 Y{y_cut - con_rad:.2f}")
+        gcode_lines.append(f"G02 X-{x_cut - con_rad:.2f} Y{y_cut + tool_rad:.2f} R{tool_rad + con_rad:.2f}")
+        gcode_lines.append(f"G01 X{x_pos:.2f}")
+        gcode_lines.append(f"G03 X{x_pos + lead_in:.2f} Y{y_cut + tool_rad + lead_in:.2f} R{lead_in:.2f}")
+        gcode_lines.append(f"G01 X{x_pos - lead_in:.2f}")
+        gcode_lines.append("M99")
+
+        gcode_lines.append("N8000")
+        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G53 G00 G40 Z0")
+        gcode_lines.append("G53 G00 G40 X0 Y0")
+        gcode_lines.append("M01")
+        gcode_lines.append("M99")
+
+        # Display the generated G-code
+        output_element = js.document.querySelector("#rect-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#rect-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+
+# This part is crucial for PyScript to call the Python function when the button is clicked.
+# The 'py-click' attribute on the button handles this automatically.
+# We just need to ensure the function is defined and accessible.
+# The function `generate_rectangle_gcode` is defined above.
+# We can add a placeholder `pass` here if needed, but it's not strictly necessary
+# as the function definition itself is what PyScript looks for.
+pass
+
+                        </py-script>
+
+                        <div class="input-section">
+                            <input type="text" id="rect-tool-no" value="3">
+                            <label for="rect-tool-no">Tool Number:</label><br>
+                            
+                            <input type="number" id="rect-tool-dia" value="6.0">
+                            <label for="rect-tool-dia">Tool Diameter:</label><br>
+
+                            <input type="text" id="rect-work-offset" value="54">
+                            <label for="rect-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="rect-spindle-rpm" value="1000">
+                            <label for="rect-spindle-rpm">Spindle RPM:</label><br>
+                            
+                            <input type="number" id="rect-x-position" value="0">
+                            <label for="rect-x-position">X Center:</label><br>
+
+                            <input type="number" id="rect-y-position" value="0">
+                            <label for="rect-y-position">Y Center:</label><br>
+
+                            <input type="number" id="rect-z-rapid" value="5">
+                            <label for="rect-z-rapid">Z Rapid:</label><br>
+
+                            <input type="number" id="rect-z-start" value="0">
+                            <label for="rect-z-start">Z Start:</label><br>
+
+                            <input type="number" id="rect-z-cut" value="1">
+                            <label for="rect-z-cut">Z Cut Increment:</label><br>
+
+                            <input type="number" id="rect-nosteps" value="5">
+                            <label for="rect-nosteps">Number of Steps:</label><br>
+
+                            <input type="number" id="rect-x-distance" value="50">
+                            <label for="rect-x-distance">X Distance:</label><br>
+
+                            <input type="number" id="rect-y-distance" value="50">
+                            <label for="rect-y-distance">Y Distance:</label><br>
+
+                            <input type="number" id="rect-corner-radius" value="5">
+                            <label for="rect-corner-radius">Corner Radius:</label><br>
+
+                            <input type="number" id="rect-lead-in" value="5">
+                            <label for="rect-lead-in">Lead In Radius:</label><br>
+
+                            <input type="number" id="rect-feed-rate" value="100">
+                            <label for="rect-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-rect-button" py-click="generate_rectangle_gcode">Generate Rectangle G-code</button>
+
+                        <div id="rect-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+ <section id="interpolation-generator">
+            <div class="container">
+                <h2>Interpolation G-code Generator</h2>
+                <p>Enter your parameters below to generate G-code for hole interpolation or thread milling.</p>
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+                        <py-script>
+import js
+from pyscript import display
+
+def generate_interpolation_gcode(event):
+    try:
+        # Get values from HTML input elements
+        tool_no = js.document.getElementById("int-tool-no").value
+        tool_dia = float(js.document.getElementById("int-tool-dia").value)
+        tool_rad = tool_dia / 2
+        
+        wrk_ofset = js.document.getElementById("int-work-offset").value
+        spdle_rpm = js.document.getElementById("int-spindle-rpm").value
+        
+        x_pos = float(js.document.getElementById("int-x-position").value)
+        y_pos = float(js.document.getElementById("int-y-position").value)
+        
+        z_rapid = float(js.document.getElementById("int-z-rapid").value)
+        z_start = float(js.document.getElementById("int-z-start").value)
+        
+        z_cut = float(js.document.getElementById("int-z-cut").value)
+        nosteps = int(js.document.getElementById("int-nosteps").value)
+        
+        diam = float(js.document.getElementById("int-diameter").value)
+        rad = diam / 2
+        
+        feedrate = float(js.document.getElementById("int-feed-rate").value)
+
+        # --- G-code generation logic based on provided Python script ---
+        gcode_lines = []
+        gcode_lines.append("Welcome to Tonys Basic Interpolation G-Code Creator")
+        gcode_lines.append("Generating G-code...")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 P{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+        gcode_lines.append(f"G00 X{x_pos:.2f} Y{y_pos:.2f} (All XY movements in sub-program are)")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
+        gcode_lines.append("M97 P401")
+        gcode_lines.append("(For multiple holes add more XY positions and re-run Sub-program)")
+        gcode_lines.append(f"G00 Z{z_rapid + 20} M09")
+        gcode_lines.append("M05")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M30")
+
+        gcode_lines.append("N401")
+        gcode_lines.append(f"G90 G01 Z{z_start} F{feedrate/2:.2f}")
+        gcode_lines.append(f"G91 G01 X{rad - tool_rad:.2f} F{feedrate/2:.2f}")
+        gcode_lines.append(f"G91 G03 Z-{z_cut:.2f} I-{rad - tool_rad:.2f} F{feedrate:.2f} L{nosteps}")
+        gcode_lines.append(f"(For a bottom finish hole, use this line --  G03 I-{rad - tool_rad:.2f})")
+        gcode_lines.append(f"G91 G01 X-{rad - tool_rad:.2f} F{feedrate/2:.2f}")
+        gcode_lines.append(f"G90 G01 Z{z_start}")
+        gcode_lines.append(f"G00 Z{z_rapid}")
+        gcode_lines.append("M99")
+
+        gcode_lines.append("N8000")
+        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G53 G00 G40 Z0")
+        gcode_lines.append("G53 G00 G40 X0 Y0")
+        gcode_lines.append("M01")
+        gcode_lines.append("M99")
+
+        # Display the generated G-code
+        output_element = js.document.querySelector("#int-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#int-gcode-output pre code")
+        # --- FINAL FIX APPLIED HERE: Closed the string literal and parenthesis ---
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+
+# Placeholder for the function definition itself, as py-click handles the event.
+pass
+
+</py-script>
+
+
+
+                        <div class="input-section">
+                            <input type="text" id="int-tool-no" value="4">
+                            <label for="int-tool-no">Tool Number:</label><br>
+
+                            <input type="number" id="int-tool-dia" value="6.0">
+                            <label for="int-tool-dia">Tool Diameter:</label><br>
+
+                            <input type="text" id="int-work-offset" value="54">
+                            <label for="int-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="int-spindle-rpm" value="1000">
+                            <label for="int-spindle-rpm">Spindle RPM:</label><br>
+
+                            <input type="number" id="int-x-position" value="0.0">
+                            <label for="int-x-position">X Center:</label><br>
+
+                            <input type="number" id="int-y-position" value="0.0">
+                            <label for="int-y-position">Y Center:</label><br>
+
+                            <input type="number" id="int-z-rapid" value="5.0">
+                            <label for="int-z-rapid">Z Rapid:</label><br>
+
+                            <input type="number" id="int-z-start" value="0.0">
+                            <label for="int-z-start">Z Start:</label><br>
+
+                            <input type="number" id="int-z-cut" value="1">
+                            <label for="int-z-cut">Z Cut Increment/Pitch:</label><br>
+
+                            <input type="number" id="int-nosteps" value="5">
+                            <label for="int-nosteps">Number of Steps/Threads:</label><br>
+
+                            <input type="number" id="int-diameter" value="20">
+                            <label for="int-diameter">Diameter:</label><br>
+
+                            <input type="number" id="int-feed-rate" value="100">
+                            <label for="int-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-int-button" py-click="generate_interpolation_gcode">Generate Interpolation
+                            G-code</button>
+
+                        <div id="int-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<section id="hexagon-generator">
+            <div class="container">
+                <h2>Hexagon G-code Generator</h2>
+                <p>Enter your parameters below to generate G-code for milling a hexagonal profile.</p>
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+                        <py-script>
+import js
+from pyscript import display
+
+def generate_hexagon_gcode(event):
+    try:
+        # Get values from HTML input elements
+        tool_no = js.document.getElementById("hex-tool-no").value
+        tool_dia = float(js.document.getElementById("hex-tool-dia").value)
+        tool_rad = tool_dia / 2
+        
+        wrk_ofset = js.document.getElementById("hex-work-offset").value
+        spdle_rpm = js.document.getElementById("hex-spindle-rpm").value
+        
+        x_pos = float(js.document.getElementById("hex-x-position").value)
+        y_pos = float(js.document.getElementById("hex-y-position").value)
+        
+        z_rapid = float(js.document.getElementById("hex-z-rapid").value)
+        z_start = float(js.document.getElementById("hex-z-start").value)
+        
+        z_cut = float(js.document.getElementById("hex-z-cut").value)
+        nosteps = int(js.document.getElementById("hex-nosteps").value)
+        
+        diam = float(js.document.getElementById("hex-diameter").value)
+        rad = diam / 2
+        diam_t = diam + tool_dia
+        rad_t = diam_t / 2
+        point_dt = diam_t / 0.86602540378
+        point_dth = point_dt / 2
+        point_dtq = point_dt / 4
+        
+        lead_in = float(js.document.getElementById("hex-lead-in").value)
+        feedrate = float(js.document.getElementById("hex-feed-rate").value)
+
+        # Pre-calculated positions for G-code generation
+        pxdthr = float(f"{x_pos + point_dth:.2f}")
+        nxdthr = float(f"{x_pos - point_dth:.2f}")
+        pxdtqr = float(f"{x_pos + point_dtq:.2f}")
+        nxdtqr = float(f"{x_pos - point_dtq:.2f}")
+        pyrtr = float(f"{y_pos + rad_t:.2f}")
+        nyrtr = float(f"{y_pos - rad_t:.2f}")
+
+        # --- G-code generation logic based on provided Python script ---
+        gcode_lines = []
+        gcode_lines.append("Welcome to Tonys Basic external Hexagonal Milling G-Code Creator")
+        gcode_lines.append("Generating G-code...")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 P{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+        gcode_lines.append(f"G00 X{point_dth + lead_in:.2f} Y{y_pos + lead_in:.2f}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
+        gcode_lines.append(f"M97 P501 L{nosteps}")
+        gcode_lines.append(f"G00 Z{z_rapid + 20} M09")
+        gcode_lines.append("M05")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M30")
+
+        gcode_lines.append("N501")
+        gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}")
+        gcode_lines.append("G90")
+        gcode_lines.append(f"G03 X{pxdthr:.2f} Y{y_pos:.2f} J-{lead_in:.2f} F{feedrate:.2f}")
+        gcode_lines.append(f"G01 X{pxdtqr:.2f} Y{nyrtr:.2f}")
+        gcode_lines.append(f"G01 X{nxdtqr:.2f} Y{nyrtr:.2f}")
+        gcode_lines.append(f"G01 X{nxdthr:.2f} Y{y_pos:.2f}")
+        gcode_lines.append(f"G01 X{nxdtqr:.2f} Y{pyrtr:.2f}")
+        gcode_lines.append(f"G01 X{pxdtqr:.2f} Y{pyrtr:.2f}")
+        gcode_lines.append(f"G01 X{pxdthr:.2f} Y{y_pos:.2f}")
+        gcode_lines.append(f"G03 X{pxdthr + lead_in:.2f} Y{y_pos - lead_in:.2f} I{lead_in:.2f}")
+        gcode_lines.append(f"G01 X{pxdthr + lead_in:.2f} Y{y_pos + lead_in:.2f}")
+        gcode_lines.append("M99")
+
+        gcode_lines.append("N8000")
+        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G53 G00 G40 Z0")
+        gcode_lines.append("G53 G00 G40 X0 Y0")
+        gcode_lines.append("M01")
+        gcode_lines.append("M99")
+
+        # Display the generated G-code
+        output_element = js.document.querySelector("#hex-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#hex-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+
+# Placeholder for the function definition itself, as py-click handles the event.
+pass
+
+                        </py-script>
+
+                        <div class="input-section">
+                            <input type="text" id="hex-tool-no" value="5">
+                            <label for="hex-tool-no">Tool Number:</label><br>
+                            
+                            <input type="number" id="hex-tool-dia" value="6.0">
+                            <label for="hex-tool-dia">Tool Diameter:</label><br>
+
+                            <input type="text" id="hex-work-offset" value="54">
+                            <label for="hex-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="hex-spindle-rpm" value="1000">
+                            <label for="hex-spindle-rpm">Spindle RPM:</label><br>
+                            
+                            <input type="number" id="hex-x-position" value="0.0">
+                            <label for="hex-x-position">X Center:</label><br>
+
+                            <input type="number" id="hex-y-position" value="0.0">
+                            <label for="hex-y-position">Y Center:</label><br>
+
+                            <input type="number" id="hex-z-rapid" value="5.0">
+                            <label for="hex-z-rapid">Z Rapid:</label><br>
+
+                            <input type="number" id="hex-z-start" value="0.0">
+                            <label for="hex-z-start">Z Start:</label><br>
+
+                            <input type="number" id="hex-z-cut" value="1">
+                            <label for="hex-z-cut">Z Cut Increment:</label><br>
+
+                            <input type="number" id="hex-nosteps" value="5">
+                            <label for="hex-nosteps">Number of Steps:</label><br>
+
+                            <input type="number" id="hex-diameter" value="30">
+                            <label for="hex-diameter">Diameter (Across Flats):</label><br>
+
+                            <input type="number" id="hex-lead-in" value="5">
+                            <label for="hex-lead-in">Lead In Distance:</label><br>
+
+                            <input type="number" id="hex-feed-rate" value="100">
+                            <label for="hex-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-hex-button" py-click="generate_hexagon_gcode">Generate Hexagon G-code</button>
+
+                        <div id="hex-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Tony Willis. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
+<!--   {]ccc(::::::::::::::::::::>
