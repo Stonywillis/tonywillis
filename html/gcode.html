@@ -277,8 +277,8 @@ def generate_interpolation_gcode(event):
         gcode_lines.append("N401")
         gcode_lines.append(f"G90 G01 Z{z_start} F{feedrate/2:.2f}")
         gcode_lines.append(f"G91 G01 X{rad - tool_rad:.2f} F{feedrate/2:.2f}")
-        gcode_lines.append(f"G91 G03 Z-{z_cut:.2f} I-{rad - tool_rad:.2f} F{feedrate:.2f} L{nosteps}")
-        gcode_lines.append(f"(For a bottom finish hole, use this line --  G03 I-{rad - tool_rad:.2f})")
+        gcode_lines.append(f"G91 G02 Z-{z_cut:.2f} I-{rad - tool_rad:.2f} F{feedrate:.2f} L{nosteps}")
+        gcode_lines.append(f"(For a bottom finish hole, use this line --  G02 I-{rad - tool_rad:.2f})")
         gcode_lines.append(f"G91 G01 X-{rad - tool_rad:.2f} F{feedrate/2:.2f}")
         gcode_lines.append(f"G90 G01 Z{z_start}")
         gcode_lines.append(f"G00 Z{z_rapid}")
@@ -297,7 +297,6 @@ def generate_interpolation_gcode(event):
 
     except Exception as e:
         output_element = js.document.querySelector("#int-gcode-output pre code")
-        # --- FINAL FIX APPLIED HERE: Closed the string literal and parenthesis ---
         output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
 
 # Placeholder for the function definition itself, as py-click handles the event.
