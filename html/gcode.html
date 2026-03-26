@@ -36,6 +36,7 @@
             <a href="#rectangle-generator">Rectangle G-code Generator</a>
             <a href="#interpolation-generator">Interpolation G-code Generator</a>
             <a href="#hexagon-generator">Hexagon G-code Generator</a>
+            <a href="#bolt-hole-generator">Bolt Hole Drilling Program Generator</a>
         </div>
     </nav>
 
@@ -101,6 +102,7 @@ def generate_rectangle_gcode(event):
         gcode_lines = []
         gcode_lines.append("Welcome to Tonys Basic Rectangle G-Code Creator")
         gcode_lines.append("Generating G-code...")
+        gcode_lines.append("%") # Start of program
         gcode_lines.append("M97 P8000")
         gcode_lines.append("M05")
         gcode_lines.append(f"T{tool_no} M06")
@@ -140,6 +142,7 @@ def generate_rectangle_gcode(event):
         gcode_lines.append("G53 G00 G40 X0 Y0")
         gcode_lines.append("M01")
         gcode_lines.append("M99")
+        gcode_lines.append("%") # End of program
 
         # Display the generated G-code
         output_element = js.document.querySelector("#rect-gcode-output pre code")
@@ -257,6 +260,7 @@ def generate_interpolation_gcode(event):
         gcode_lines = []
         gcode_lines.append("Welcome to Tonys Basic Interpolation G-Code Creator")
         gcode_lines.append("Generating G-code...")
+        gcode_lines.append("%") # Start of program
         gcode_lines.append("M97 P8000")
         gcode_lines.append("M05")
         gcode_lines.append(f"T{tool_no} M06")
@@ -290,6 +294,7 @@ def generate_interpolation_gcode(event):
         gcode_lines.append("G53 G00 G40 X0 Y0")
         gcode_lines.append("M01")
         gcode_lines.append("M99")
+        gcode_lines.append("%") # End of program
 
         # Display the generated G-code
         output_element = js.document.querySelector("#int-gcode-output pre code")
@@ -410,6 +415,7 @@ def generate_hexagon_gcode(event):
         gcode_lines = []
         gcode_lines.append("Welcome to Tonys Basic external Hexagonal Milling G-Code Creator")
         gcode_lines.append("Generating G-code...")
+        gcode_lines.append("%") # Start of program
         gcode_lines.append("M97 P8000")
         gcode_lines.append("M05")
         gcode_lines.append(f"T{tool_no} M06")
@@ -446,6 +452,7 @@ def generate_hexagon_gcode(event):
         gcode_lines.append("G53 G00 G40 X0 Y0")
         gcode_lines.append("M01")
         gcode_lines.append("M99")
+        gcode_lines.append("%") # End of program
 
         # Display the generated G-code
         output_element = js.document.querySelector("#hex-gcode-output pre code")
@@ -512,6 +519,123 @@ pass
             </div>
         </section>
 
+
+        <section id="bolt-hole-generator">
+            <div class="container">
+                <h2>Bolt Hole on PCD G-code Generator</h2>
+                <img src="boltHoles.png" alt="Bolt Holes" class="shape-diagram">
+                <p>This program will create G-code for peck drilling a series of bolt holes based on the parameters you input. Please follow the prompts to input the necessary parameters.</p>
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+                        <py-script>
+import js
+from pyscript import display
+
+def generate_bolt_hole_gcode(event):
+    try:
+        tool_no = js.document.getElementById("bh-tool-no").value
+        wrk_ofset = js.document.getElementById("bh-work-offset").value
+        spdle_rpm = js.document.getElementById("bh-spindle-rpm").value
+
+        x_pos = float(js.document.getElementById("bh-x-position").value)
+        y_pos = float(js.document.getElementById("bh-y-position").value)
+
+        z_rapid = float(js.document.getElementById("bh-z-rapid").value)
+        peck = float(js.document.getElementById("bh-peck-size").value)
+        z_depth = float(js.document.getElementById("bh-z-depth").value)
+
+        pcd = float(js.document.getElementById("bh-pcd").value)
+        noholes = int(js.document.getElementById("bh-no-holes").value)
+
+        feedrate = float(js.document.getElementById("bh-feed-rate").value)
+
+        gcode_lines = []
+        gcode_lines.append("Welcome to Tonys Basic Bolt Hole G-Code Creator")
+        gcode_lines.append("Generating G-code...")
+        gcode_lines.append("%") # Start of program
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 P{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+        gcode_lines.append(f"G00 X{x_pos:.2f} Y{y_pos:.2f}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        # G83 Z-depth R-rapid Q-peck F-feedrate L0 (L0 means it will repeat based on G70)
+        gcode_lines.append(f"G83 Z-{z_depth:.2f} R{z_rapid:.2f} Q{peck:.2f} F{feedrate:.2f} L0")
+        # G70 I-radius J0 L-number_of_holes
+        gcode_lines.append(f"G70 I{pcd/2:.2f} J0 L{noholes}")
+        gcode_lines.append("G80") # Cancel canned cycle
+        gcode_lines.append(f"G00 Z{z_rapid} M09") # Retract to rapid position and turn off coolant
+        gcode_lines.append("M05") # Spindle stop
+        gcode_lines.append("M97 P8000") # Call subprogram for program stop/reset
+        gcode_lines.append("M30") # Program end and reset
+
+        gcode_lines.append("N8000") # Subprogram for program stop/reset
+        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G53 G00 G40 Z0") # Move Z to machine zero
+        gcode_lines.append("G53 G00 G40 X0 Y0") # Move X/Y to machine zero
+        gcode_lines.append("M01") # Optional program stop
+        gcode_lines.append("M99") # End of subprogram
+        gcode_lines.append("%") # End of program
+
+        output_element = js.document.querySelector("#bh-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#bh-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+# Placeholder for the function definition itself, as py-click handles the event.
+pass
+                        </py-script>
+
+                        <div class="input-section">
+                            <input type="text" id="bh-tool-no" value="6">
+                            <label for="bh-tool-no">Tool Number:</label><br>
+                            
+                            <input type="text" id="bh-work-offset" value="54">
+                            <label for="bh-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="bh-spindle-rpm" value="1500">
+                            <label for="bh-spindle-rpm">Spindle RPM:</label><br>
+                            
+                            <input type="number" id="bh-x-position" value="0.0">
+                            <label for="bh-x-position">X Center:</label><br>
+
+                            <input type="number" id="bh-y-position" value="0.0">
+                            <label for="bh-y-position">Y Center:</label><br>
+
+                            <input type="number" id="bh-z-rapid" value="2.0">
+                            <label for="bh-z-rapid">Z Rapid:</label><br>
+
+                            <input type="number" id="bh-peck-size" value=".5">
+                            <label for="bh-peck-size">Z Peck Size:</label><br>
+
+                            <input type="number" id="bh-z-depth" value="10.0">
+                            <label for="bh-z-depth">Drill Depth in Z:</label><br>
+
+                            <input type="number" id="bh-pcd" value="50.0">
+                            <label for="bh-pcd">PCD (Diameter):</label><br>
+
+                            <input type="number" id="bh-no-holes" value="6">
+                            <label for="bh-no-holes">Number of Holes:</label><br>
+
+                            <input type="number" id="bh-feed-rate" value="80">
+                            <label for="bh-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-bh-button" py-click="generate_bolt_hole_gcode">Generate Bolt Hole G-code</button>
+
+                        <div id="bh-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
     </main>
