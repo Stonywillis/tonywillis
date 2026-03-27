@@ -120,7 +120,7 @@ def generate_rectangle_gcode(event):
         gcode_lines.append("M97 P8000")
         gcode_lines.append("M30")
 
-        gcode_lines.append("N301")
+        gcode_lines.append("\nN301")
         gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}")
         gcode_lines.append(f"G90 G03 X{x_pos:.2f} Y{y_cut + tool_rad:.2f} R{lead_in:.2f} F{feedrate:.2f}")
         gcode_lines.append(f"G01 X{x_cut - con_rad:.2f}")
@@ -136,7 +136,7 @@ def generate_rectangle_gcode(event):
         gcode_lines.append(f"G01 X{x_pos - lead_in:.2f}")
         gcode_lines.append("M99")
 
-        gcode_lines.append("N8000")
+        gcode_lines.append("\nN8000")
         gcode_lines.append("G00 G90 G99 G97 M09")
         gcode_lines.append("G53 G00 G40 Z0")
         gcode_lines.append("G53 G00 G40 X0 Y0")
@@ -278,7 +278,7 @@ def generate_interpolation_gcode(event):
         gcode_lines.append("M97 P8000")
         gcode_lines.append("M30")
 
-        gcode_lines.append("N401")
+        gcode_lines.append("\nN401")
         gcode_lines.append(f"G90 G01 Z{z_start} F{feedrate/2:.2f}")
         gcode_lines.append(f"G91 G01 X{rad - tool_rad:.2f} F{feedrate/2:.2f}")
         gcode_lines.append(f"G91 G02 Z-{z_cut:.2f} I-{rad - tool_rad:.2f} F{feedrate:.2f} L{nosteps}")
@@ -288,7 +288,7 @@ def generate_interpolation_gcode(event):
         gcode_lines.append(f"G00 Z{z_rapid}")
         gcode_lines.append("M99")
 
-        gcode_lines.append("N8000")
+        gcode_lines.append("\nN8000")
         gcode_lines.append("G00 G90 G99 G97 M09")
         gcode_lines.append("G53 G00 G40 Z0")
         gcode_lines.append("G53 G00 G40 X0 Y0")
@@ -432,7 +432,7 @@ def generate_hexagon_gcode(event):
         gcode_lines.append("M97 P8000")
         gcode_lines.append("M30")
 
-        gcode_lines.append("N501")
+        gcode_lines.append("\nN501")
         gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}")
         gcode_lines.append("G90")
         gcode_lines.append(f"G03 X{pxdthr:.2f} Y{y_pos:.2f} J-{lead_in:.2f} F{feedrate:.2f}")
@@ -446,7 +446,7 @@ def generate_hexagon_gcode(event):
         gcode_lines.append(f"G01 X{pxdthr + lead_in:.2f} Y{y_pos + lead_in:.2f}")
         gcode_lines.append("M99")
 
-        gcode_lines.append("N8000")
+        gcode_lines.append("\nN8000")
         gcode_lines.append("G00 G90 G99 G97 M09")
         gcode_lines.append("G53 G00 G40 Z0")
         gcode_lines.append("G53 G00 G40 X0 Y0")
@@ -573,7 +573,7 @@ def generate_bolt_hole_gcode(event):
         gcode_lines.append("M97 P8000") # Call subprogram for program stop/reset
         gcode_lines.append("M30") # Program end and reset
 
-        gcode_lines.append("N8000") # Subprogram for program stop/reset
+        gcode_lines.append("\nN8000") # Subprogram for program stop/reset
         gcode_lines.append("G00 G90 G99 G97 M09")
         gcode_lines.append("G53 G00 G40 Z0") # Move Z to machine zero
         gcode_lines.append("G53 G00 G40 X0 Y0") # Move X/Y to machine zero
