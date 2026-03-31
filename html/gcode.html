@@ -111,7 +111,7 @@ def generate_rectangle_gcode(event):
         gcode_lines.append("G40")
         gcode_lines.append("G98 G17")
         gcode_lines.append(f"G00 X{x_pos - lead_in:.2f} Y{y_cut + tool_rad + lead_in:.2f}")
-        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08")
         gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
         gcode_lines.append(f"M97 P301 L{nosteps}")
         gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
@@ -137,7 +137,7 @@ def generate_rectangle_gcode(event):
         gcode_lines.append("M99")
 
         gcode_lines.append("\nN8000")
-        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G00 G90 M09")
         gcode_lines.append("G53 G00 G40 Z0")
         gcode_lines.append("G53 G00 G40 X0 Y0")
         gcode_lines.append("M01")
@@ -269,7 +269,7 @@ def generate_interpolation_gcode(event):
         gcode_lines.append("G40")
         gcode_lines.append("G98 G17")
         gcode_lines.append(f"G00 X{x_pos:.2f} Y{y_pos:.2f} (All XY movements in sub-program are)")
-        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08")
         gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
         gcode_lines.append("M97 P401")
         gcode_lines.append("(For multiple holes add more XY positions and re-run Sub-program)")
@@ -289,7 +289,7 @@ def generate_interpolation_gcode(event):
         gcode_lines.append("M99")
 
         gcode_lines.append("\nN8000")
-        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G00 G90 M09")
         gcode_lines.append("G53 G00 G40 Z0")
         gcode_lines.append("G53 G00 G40 X0 Y0")
         gcode_lines.append("M01")
@@ -424,7 +424,7 @@ def generate_hexagon_gcode(event):
         gcode_lines.append("G40")
         gcode_lines.append("G98 G17")
         gcode_lines.append(f"G00 X{point_dth + lead_in:.2f} Y{y_pos + lead_in:.2f}")
-        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08")
         gcode_lines.append(f"G01 Z{z_start} F{feedrate/2:.2f}")
         gcode_lines.append(f"M97 P501 L{nosteps}")
         gcode_lines.append(f"G00 Z{z_rapid + 20} M09")
@@ -447,7 +447,7 @@ def generate_hexagon_gcode(event):
         gcode_lines.append("M99")
 
         gcode_lines.append("\nN8000")
-        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G00 G90 M09")
         gcode_lines.append("G53 G00 G40 Z0")
         gcode_lines.append("G53 G00 G40 X0 Y0")
         gcode_lines.append("M01")
@@ -562,7 +562,7 @@ def generate_bolt_hole_gcode(event):
         gcode_lines.append("G40")
         gcode_lines.append("G98 G17")
         gcode_lines.append(f"G00 X{x_pos:.2f} Y{y_pos:.2f}")
-        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 {tool_no} M08")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08")
         # G83 Z-depth R-rapid Q-peck F-feedrate L0 (L0 means it will repeat based on G70)
         gcode_lines.append(f"G83 Z-{z_depth:.2f} R{z_rapid:.2f} Q{peck:.2f} F{feedrate:.2f} L0")
         # G70 I-radius J0 L-number_of_holes
@@ -574,7 +574,7 @@ def generate_bolt_hole_gcode(event):
         gcode_lines.append("M30") # Program end and reset
 
         gcode_lines.append("\nN8000") # Subprogram for program stop/reset
-        gcode_lines.append("G00 G90 G99 G97 M09")
+        gcode_lines.append("G00 G90 M09")
         gcode_lines.append("G53 G00 G40 Z0") # Move Z to machine zero
         gcode_lines.append("G53 G00 G40 X0 Y0") # Move X/Y to machine zero
         gcode_lines.append("M01") # Optional program stop
