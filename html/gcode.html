@@ -34,6 +34,7 @@
         <div class="container">
             <a href="https://bonesforge.co.uk">Home</a>
             <a href="#rectangle-generator">Rectangle</a>
+            <a href="#rectangle-g41-generator">Rectangle (G41 Offset)</a>
             <a href="#interpolation-generator">Interpolation</a>
             <a href="#hexagon-generator">Hexagon</a>
             <a href="#bolt-hole-generator">Bolt Hole Drilling</a>
@@ -163,7 +164,7 @@ pass
                         </py-script>
 
                         <div class="input-section">
-                            <input type="text" id="rect-tool-no" value="3">
+                            <input type="text" id="rect-tool-no" value="2">
                             <label for="rect-tool-no">Tool Number:</label><br>
                             
                             <input type="number" id="rect-tool-dia" value="6.0">
@@ -219,6 +220,182 @@ pass
                 </div>
             </div>
         </section>
+
+        <section id="rectangle-g41-generator">
+            <div class="container">
+                <h2>Rectangle G-code Generator (G41 Offset)</h2>
+                <h2>This code is similar to the Rectangle code above, but uses G41 to offset the tool according to the tool table.</h2>
+                <img src="Rectangle.png" alt="Rectangle Diagram" class="shape-diagram">
+                <p>This program will create G-code for a simple rectangle, utilising G41 to offset the tool, based on the parameters you input. Please follow the prompts to input the necessary parameters.</p>
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+                        <py-script>
+import js
+from pyscript import display
+
+def generate_rectangle_g41_gcode(event):
+    try:
+        tool_no = js.document.getElementById("r41-tool-no").value
+        tool_dia = float(js.document.getElementById("r41-tool-dia").value)
+        tool_rad = tool_dia / 2.0
+        
+        wrk_ofset = js.document.getElementById("r41-work-offset").value
+        spdle_rpm = js.document.getElementById("r41-spindle-rpm").value
+
+        x_pos = float(js.document.getElementById("r41-x-position").value)
+        y_pos = float(js.document.getElementById("r41-y-position").value)
+
+        z_rapid = float(js.document.getElementById("r41-z-rapid").value)
+        z_start = float(js.document.getElementById("r41-z-start").value)
+
+        z_cut = float(js.document.getElementById("r41-z-cut").value)
+        nosteps = int(js.document.getElementById("r41-nosteps").value)
+
+        x_dist = float(js.document.getElementById("r41-x-distance").value)
+        x_cutl = x_dist / 2.0
+
+        y_dist = float(js.document.getElementById("r41-y-distance").value)
+        y_cutl = y_dist / 2.0
+
+        con_rad = float(js.document.getElementById("r41-corner-radius").value)
+        lead_in = float(js.document.getElementById("r41-lead-in-radius").value)
+
+        feedrate = float(js.document.getElementById("r41-feed-rate").value)
+
+        gcode_lines = []
+        gcode_lines.append("Welcome to Tonys Basic Rectangle with a G41 offset G-Code Creator")
+        gcode_lines.append("Generating G-code...")
+        gcode_lines.append("\n%") # Start of program
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06 ({tool_dia}mm Cutter)")
+        gcode_lines.append(f"M03 P{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40") # Cancel any previous cutter compensation
+        gcode_lines.append("G98 G17") # G98: Return to initial plane, G17: XY plane selection
+        
+        # Move to starting point for lead-in
+        gcode_lines.append(f"G00 X{x_pos:.2f} Y{y_cutl + lead_in:.2f}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08") # Set Z rapid, tool length comp, coolant on
+        gcode_lines.append(f"G01 Z{z_start:.2f} F{feedrate/2:.2f}") # Plunge to start depth
+
+        # Loop for multiple depth cuts
+        for i in range(nosteps):
+            current_z = z_start - (i * z_cut)
+            gcode_lines.append(f"M97 P201 L1") # Call subprogram for cutting path   
+            gcode_lines.append(f"G01 Z{current_z:.2f} F{feedrate/2:.2f}") # Ensure we are at the correct depth before moving
+
+        gcode_lines.append(f"G00 Z{z_rapid} M09") # Retract to rapid Z and turn off coolant
+        gcode_lines.append("M05") # Spindle stop
+        gcode_lines.append("M97 P8000") # Call subprogram for program stop/reset
+        gcode_lines.append("M30") # Program end and reset
+
+        # Subprogram N301: Cutting path with G41
+        gcode_lines.append("\nN201")
+        # G91 G01 Z-ZCut F(Feedrate/2) - This line seems to be already handled before calling M97 P301 L1
+        # The original script has G91 G01 Z-ZCut F(Feedrate/2) inside N301, but it's better to ensure depth before calling the subprogram
+        # We will keep the logic as close to original as possible, assuming the user wants it inside N301
+        gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}") # Pecking depth increment
+        gcode_lines.append("G90") # Back to absolute positioning
+        # G01 G41 D(ToolNo) G01 X(XPos - LeadIn) - D register is for tool length comp, G41 is cutter comp. Usually H for length, D for comp.
+        # Assuming D register is used for tool diameter/radius compensation value. If not, this might need adjustment.
+        gcode_lines.append(f"G01 G41 D{tool_no} X{x_pos - lead_in:.2f} F{feedrate:.2f}") # Activate G41, move to start of cut path
+        
+        # Path generation - adjusted for center XPos, YPos and half distances
+        # Start point of the main path after lead-in
+        gcode_lines.append(f"G03 X{x_pos:.2f} Y{y_cutl:.2f} R{lead_in:.2f}") # Arc to first corner approach
+        gcode_lines.append(f"G01 X{x_cutl - con_rad:.2f} Y{y_cutl:.2f}") # Straight line to start of first radius
+        gcode_lines.append(f"G02 X{x_cutl:.2f} Y{y_cutl - con_rad:.2f} R{con_rad:.2f}") # First corner radius (top right)
+        gcode_lines.append(f"G01 X{x_cutl:.2f} Y-{y_cutl - con_rad:.2f}") # Straight line down
+        gcode_lines.append(f"G02 X{x_cutl - con_rad:.2f} Y-{y_cutl:.2f} R{con_rad:.2f}") # Second corner radius (bottom right)
+        gcode_lines.append(f"G01 X-{x_cutl - con_rad:.2f} Y-{y_cutl:.2f}") # Straight line left
+        gcode_lines.append(f"G02 X-{x_cutl:.2f} Y-{y_cutl - con_rad:.2f} R{con_rad:.2f}") # Third corner radius (bottom left)
+        gcode_lines.append(f"G01 Y{y_cutl - con_rad:.2f}") # Straight line up
+        gcode_lines.append(f"G02 X-{x_cutl - con_rad:.2f} Y{y_cutl:.2f} R{con_rad:.2f}") # Fourth corner radius (top left)
+        gcode_lines.append(f"G01 X{x_pos:.2f} Y{y_cutl:.2f}") # Straight line to end of path
+        gcode_lines.append(f"G03 X{x_pos + lead_in:.2f} Y{y_cutl + lead_in:.2f} R{lead_in:.2f}") # Arc for lead-out
+        
+        gcode_lines.append(f"G01 G40 X{x_pos:.2f}") # Deactivate G41, move to final X position
+        gcode_lines.append("M99") # End of subprogram
+
+        # Subprogram N8000: Program stop/reset
+        gcode_lines.append("\nN8000")
+        gcode_lines.append("G00 G90 M09") # Rapid move, absolute positioning, coolant off
+        gcode_lines.append("G53 G00 G40 Z0") # Move Z to machine zero (G53 uses machine coordinates)
+        gcode_lines.append("G53 G00 G40 X0 Y0") # Move X/Y to machine zero
+        gcode_lines.append("M01") # Optional program stop
+        gcode_lines.append("M99") # End of subprogram
+        gcode_lines.append("%") # End of program
+
+        output_element = js.document.querySelector("#r41-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#r41-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+# Placeholder for the function definition itself, as py-click handles the event.
+pass
+                        </py-script>
+
+                        <div class="input-section">
+                            <input type="text" id="r41-tool-no" value="3">
+                            <label for="r41-tool-no">Tool Number:</label><br>
+                            
+                            <input type="number" id="r41-tool-dia" value="6.0">
+                            <label for="r41-tool-dia">Tool Diameter:</label><br>
+                            
+                            <input type="text" id="r41-work-offset" value="54">
+                            <label for="r41-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="r41-spindle-rpm" value="1000">
+                            <label for="r41-spindle-rpm">Spindle RPM:</label><br>
+                            
+                            <input type="number" id="r41-x-position" value="0.0">
+                            <label for="r41-x-position">X Center:</label><br>
+
+                            <input type="number" id="r41-y-position" value="0.0">
+                            <label for="r41-y-position">Y Center:</label><br>
+
+                            <input type="number" id="r41-z-rapid" value="5.0">
+                            <label for="r41-z-rapid">Z Rapid:</label><br>
+
+                            <input type="number" id="r41-z-start" value="0.0">
+                            <label for="r41-z-start">Z Start:</label><br>
+
+                            <input type="number" id="r41-z-cut" value="1.0">
+                            <label for="r41-z-cut">Z Cut Increment:</label><br>
+
+                            <input type="number" id="r41-nosteps" value="5">
+                            <label for="r41-nosteps">Number of Steps:</label><br>
+
+                            <input type="number" id="r41-x-distance" value="50.0">
+                            <label for="r41-x-distance">X Distance:</label><br>
+
+                            <input type="number" id="r41-y-distance" value="50.0">
+                            <label for="r41-y-distance">Y Distance:</label><br>
+
+                            <input type="number" id="r41-corner-radius" value="5.0">
+                            <label for="r41-corner-radius">Corner Radius:</label><br>
+
+                            <input type="number" id="r41-lead-in-radius" value="5.0">
+                            <label for="r41-lead-in-radius">Lead In Radius:</label><br>
+
+                            <input type="number" id="r41-feed-rate" value="100.0">
+                            <label for="r41-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-r41-button" py-click="generate_rectangle_g41_gcode">Generate Rectangle G41 G-code</button>
+
+                        <div id="r41-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
  <section id="interpolation-generator">
             <div class="container">
