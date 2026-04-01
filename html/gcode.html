@@ -272,61 +272,43 @@ def generate_rectangle_g41_gcode(event):
         gcode_lines.append(f"T{tool_no} M06 ({tool_dia}mm Cutter)")
         gcode_lines.append(f"M03 P{spdle_rpm}")
         gcode_lines.append(f"G{wrk_ofset}")
-        gcode_lines.append("G40") # Cancel any previous cutter compensation
-        gcode_lines.append("G98 G17") # G98: Return to initial plane, G17: XY plane selection
-        
-        # Move to starting point for lead-in
+        gcode_lines.append("G40") 
+        gcode_lines.append("G98 G17") 
         gcode_lines.append(f"G00 X{x_pos:.2f} Y{y_cutl + lead_in:.2f}")
-        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08") # Set Z rapid, tool length comp, coolant on
-        gcode_lines.append(f"G01 Z{z_start:.2f} F{feedrate/2:.2f}") # Plunge to start depth
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid} G43 H{tool_no} M08") 
+        gcode_lines.append(f"G01 Z{z_start:.2f} F{feedrate/2:.2f}") 
+        gcode_lines.append(f"M97 P201 L{nosteps}") 
+        gcode_lines.append(f"G01 Z{z_start:.2f} F{feedrate/2:.2f}") 
+        gcode_lines.append(f"G00 Z{z_rapid} M09") 
+        gcode_lines.append("M05") 
+        gcode_lines.append("M97 P8000") 
+        gcode_lines.append("M30") 
 
-        # Loop for multiple depth cuts
-        for i in range(nosteps):
-            current_z = z_start - (i * z_cut)
-            gcode_lines.append(f"M97 P201 L1") # Call subprogram for cutting path   
-            gcode_lines.append(f"G01 Z{current_z:.2f} F{feedrate/2:.2f}") # Ensure we are at the correct depth before moving
-
-        gcode_lines.append(f"G00 Z{z_rapid} M09") # Retract to rapid Z and turn off coolant
-        gcode_lines.append("M05") # Spindle stop
-        gcode_lines.append("M97 P8000") # Call subprogram for program stop/reset
-        gcode_lines.append("M30") # Program end and reset
-
-        # Subprogram N301: Cutting path with G41
         gcode_lines.append("\nN201")
-        # G91 G01 Z-ZCut F(Feedrate/2) - This line seems to be already handled before calling M97 P301 L1
-        # The original script has G91 G01 Z-ZCut F(Feedrate/2) inside N301, but it's better to ensure depth before calling the subprogram
-        # We will keep the logic as close to original as possible, assuming the user wants it inside N301
-        gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}") # Pecking depth increment
-        gcode_lines.append("G90") # Back to absolute positioning
-        # G01 G41 D(ToolNo) G01 X(XPos - LeadIn) - D register is for tool length comp, G41 is cutter comp. Usually H for length, D for comp.
-        # Assuming D register is used for tool diameter/radius compensation value. If not, this might need adjustment.
-        gcode_lines.append(f"G01 G41 D{tool_no} X{x_pos - lead_in:.2f} F{feedrate:.2f}") # Activate G41, move to start of cut path
+        gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate/2:.2f}") 
+        gcode_lines.append("G90") 
+        gcode_lines.append(f"G01 G41 D{tool_no} X{x_pos - lead_in:.2f} F{feedrate:.2f}") 
+        gcode_lines.append(f"G03 X{x_pos:.2f} Y{y_cutl:.2f} R{lead_in:.2f}") 
+        gcode_lines.append(f"G01 X{x_cutl - con_rad:.2f} Y{y_cutl:.2f}") 
+        gcode_lines.append(f"G02 X{x_cutl:.2f} Y{y_cutl - con_rad:.2f} R{con_rad:.2f}") 
+        gcode_lines.append(f"G01 X{x_cutl:.2f} Y-{y_cutl - con_rad:.2f}") 
+        gcode_lines.append(f"G02 X{x_cutl - con_rad:.2f} Y-{y_cutl:.2f} R{con_rad:.2f}") 
+        gcode_lines.append(f"G01 X-{x_cutl - con_rad:.2f} Y-{y_cutl:.2f}")
+        gcode_lines.append(f"G02 X-{x_cutl:.2f} Y-{y_cutl - con_rad:.2f} R{con_rad:.2f}") 
+        gcode_lines.append(f"G01 Y{y_cutl - con_rad:.2f}") 
+        gcode_lines.append(f"G02 X-{x_cutl - con_rad:.2f} Y{y_cutl:.2f} R{con_rad:.2f}") 
+        gcode_lines.append(f"G01 X{x_pos:.2f} Y{y_cutl:.2f}") 
+        gcode_lines.append(f"G03 X{x_pos + lead_in:.2f} Y{y_cutl + lead_in:.2f} R{lead_in:.2f}") 
+        gcode_lines.append(f"G01 G40 X{x_pos:.2f}") 
+        gcode_lines.append("M99") 
         
-        # Path generation - adjusted for center XPos, YPos and half distances
-        # Start point of the main path after lead-in
-        gcode_lines.append(f"G03 X{x_pos:.2f} Y{y_cutl:.2f} R{lead_in:.2f}") # Arc to first corner approach
-        gcode_lines.append(f"G01 X{x_cutl - con_rad:.2f} Y{y_cutl:.2f}") # Straight line to start of first radius
-        gcode_lines.append(f"G02 X{x_cutl:.2f} Y{y_cutl - con_rad:.2f} R{con_rad:.2f}") # First corner radius (top right)
-        gcode_lines.append(f"G01 X{x_cutl:.2f} Y-{y_cutl - con_rad:.2f}") # Straight line down
-        gcode_lines.append(f"G02 X{x_cutl - con_rad:.2f} Y-{y_cutl:.2f} R{con_rad:.2f}") # Second corner radius (bottom right)
-        gcode_lines.append(f"G01 X-{x_cutl - con_rad:.2f} Y-{y_cutl:.2f}") # Straight line left
-        gcode_lines.append(f"G02 X-{x_cutl:.2f} Y-{y_cutl - con_rad:.2f} R{con_rad:.2f}") # Third corner radius (bottom left)
-        gcode_lines.append(f"G01 Y{y_cutl - con_rad:.2f}") # Straight line up
-        gcode_lines.append(f"G02 X-{x_cutl - con_rad:.2f} Y{y_cutl:.2f} R{con_rad:.2f}") # Fourth corner radius (top left)
-        gcode_lines.append(f"G01 X{x_pos:.2f} Y{y_cutl:.2f}") # Straight line to end of path
-        gcode_lines.append(f"G03 X{x_pos + lead_in:.2f} Y{y_cutl + lead_in:.2f} R{lead_in:.2f}") # Arc for lead-out
-        
-        gcode_lines.append(f"G01 G40 X{x_pos:.2f}") # Deactivate G41, move to final X position
-        gcode_lines.append("M99") # End of subprogram
-
-        # Subprogram N8000: Program stop/reset
         gcode_lines.append("\nN8000")
-        gcode_lines.append("G00 G90 M09") # Rapid move, absolute positioning, coolant off
-        gcode_lines.append("G53 G00 G40 Z0") # Move Z to machine zero (G53 uses machine coordinates)
-        gcode_lines.append("G53 G00 G40 X0 Y0") # Move X/Y to machine zero
-        gcode_lines.append("M01") # Optional program stop
-        gcode_lines.append("M99") # End of subprogram
-        gcode_lines.append("%") # End of program
+        gcode_lines.append("G00 G90 M09") 
+        gcode_lines.append("G53 G00 G40 Z0") 
+        gcode_lines.append("G53 G00 G40 X0 Y0") 
+        gcode_lines.append("M01") #
+        gcode_lines.append("M99") 
+        gcode_lines.append("%") 
 
         output_element = js.document.querySelector("#r41-gcode-output pre code")
         output_element.innerText = "\n".join(gcode_lines)
