@@ -34,10 +34,11 @@
         <div class="container">
             <a href="https://bonesforge.co.uk">Home</a>
             <a href="#rectangle-generator">Rectangle</a>
-            <a href="#rectangle-g41-generator">Rectangle (G41 Offset)</a>
+            <a href="#rectangle-g41-generator">Rectangle(G41 Offset)</a>
             <a href="#interpolation-generator">Interpolation</a>
             <a href="#hexagon-generator">Hexagon</a>
-            <a href="#bolt-hole-generator">Bolt Hole Drilling</a>
+            <a href="#bolt-hole-generator">Bolt_Holes</a>
+            <a href="#rectangle-pocket-generator">Rectangle_Pocket</a>
         </div>
     </nav>
 
@@ -788,6 +789,179 @@ pass
                         <button id="generate-bh-button" py-click="generate_bolt_hole_gcode">Generate Bolt Hole G-code</button>
 
                         <div id="bh-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="rectangle-pocket-generator">
+            <div class="container">
+                <h2>Rectangle Pocket G-code Creator</h2>
+                <img src="rectPocket.png" alt="Rectangular Pocket Diagram" class="shape-diagram">
+                <p>This program will create G-code for a simple rectangular pocket based on the parameters you input.</p>
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+                        <py-script>
+import js
+from pyscript import display
+
+def generate_rect_pocket_gcode(event):
+    try:
+        tool_no = js.document.getElementById("rp-tool-no").value
+        tool_dia = float(js.document.getElementById("rp-tool-dia").value)
+        tool_rad = tool_dia / 2.0
+        
+        wrk_ofset = js.document.getElementById("rp-work-offset").value
+        spdle_rpm = js.document.getElementById("rp-spindle-rpm").value
+
+        x_pos = float(js.document.getElementById("rp-x-position").value)
+        y_pos = float(js.document.getElementById("rp-y-position").value)
+
+        z_rapid = float(js.document.getElementById("rp-z-rapid").value)
+        z_start = float(js.document.getElementById("rp-z-start").value)
+
+        tz_cut = float(js.document.getElementById("rp-tz-cut").value)
+        z_depth = float(js.document.getElementById("rp-z-depth").value)
+
+        nosteps = int(z_depth / tz_cut)
+        z_cut = z_depth / nosteps if nosteps > 0 else z_depth
+
+        x_dist = float(js.document.getElementById("rp-x-distance").value)
+        y_dist = float(js.document.getElementById("rp-y-distance").value)
+
+        step_over_percent = float(js.document.getElementById("rp-step-over").value)
+        step_over = (step_over_percent / 100) * tool_dia
+
+        feedrate = float(js.document.getElementById("rp-feed-rate").value)
+
+        x_cut_inner = (x_dist / 2.0) - tool_rad
+        y_cut_inner = (y_dist / 2.0) - tool_rad
+
+        if x_cut_inner > y_cut_inner:
+            side_steps = x_cut_inner / step_over
+        else:
+            side_steps = y_cut_inner / step_over
+        
+        side_steps = max(1, int(side_steps)) 
+
+        gcode_lines = []
+        gcode_lines.append("Welcome to Tony's Basic Rectangle Pocket G-Code Creator")
+        gcode_lines.append("Generating G-code...")
+        
+        gcode_lines.append("\n%")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 S{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+
+        gcode_lines.append(f"G00 X{x_pos + step_over:.2f} Y{y_pos:.2f}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{z_rapid:.2f} G43 H{tool_no} M08")
+        gcode_lines.append(f"G01 Z{z_start:.2f} F{feedrate / 2:.2f}")
+        gcode_lines.append(f"G91 G02 I-{step_over:.2f} Z-{z_cut / 2.0:.2f} L{2 * nosteps} F{feedrate / 2.0:.2f}")
+        gcode_lines.append(f"G02 I-{step_over:.2f}") 
+        
+        gcode_lines.append(f"G90 G01 X{x_pos:.2f} F{feedrate:.2f}")
+        gcode_lines.append(f"G01 Z{z_start:.2f} F{feedrate:.2f}")
+
+        gcode_lines.append(f"M97 P701 L{nosteps}")
+
+        gcode_lines.append(f"G00 Z{z_rapid:.2f} M09")
+        gcode_lines.append("M05")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M30")
+
+        gcode_lines.append("\nN701")
+        gcode_lines.append(f"G91 G01 Z-{z_cut:.2f} F{feedrate / 2.0:.2f}")
+        gcode_lines.append("F" + str(feedrate))
+        gcode_lines.append("G90")
+
+        for i in range(1, side_steps + 1):
+            current_x_offset = x_cut_inner * (i / side_steps)
+            current_y_offset = y_cut_inner * (i / side_steps)
+            
+            gcode_lines.append(f"G01 X{x_pos + current_x_offset:.2f}")
+            gcode_lines.append(f"G01 Y{y_pos - current_y_offset:.2f}")
+            gcode_lines.append(f"G01 X{x_pos - current_x_offset:.2f}")
+            gcode_lines.append(f"G01 Y{y_pos + current_y_offset:.2f}")
+            gcode_lines.append(f"G01 X{x_pos + current_x_offset:.2f}")
+            gcode_lines.append(f"G01 Y{y_pos:.2f}")
+
+        gcode_lines.append(f"G01 X{x_pos:.2f} Y{y_pos:.2f}")
+        
+        gcode_lines.append("M99")
+
+        gcode_lines.append("\nN8000")
+        gcode_lines.append("G00 G90 M09")
+        gcode_lines.append("G53 G00 G40 Z0")
+        gcode_lines.append("G53 G00 G40 X0 Y0")
+        gcode_lines.append("M01")
+        gcode_lines.append("M99")
+        gcode_lines.append("%")
+
+        output_element = js.document.querySelector("#rp-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#rp-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+pass
+                        </py-script>
+
+                        <div class="input-section">
+                            <input type="text" id="rp-tool-no" value="7">
+                            <label for="rp-tool-no">Tool Number:</label><br>
+                            
+                            <input type="number" id="rp-tool-dia" value="10.0">
+                            <label for="rp-tool-dia">Tool Diameter:</label><br>
+                            
+                            <input type="text" id="rp-work-offset" value="54">
+                            <label for="rp-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="rp-spindle-rpm" value="1000">
+                            <label for="rp-spindle-rpm">Spindle RPM:</label><br>
+                            
+                            <input type="number" id="rp-x-position" value="0.0">
+                            <label for="rp-x-position">X Center:</label><br>
+
+                            <input type="number" id="rp-y-position" value="0.0">
+                            <label for="rp-y-position">Y Center:</label><br>
+
+                            <input type="number" id="rp-z-rapid" value="5.0">
+                            <label for="rp-z-rapid">Z Rapid:</label><br>
+
+                            <input type="number" id="rp-z-start" value="0.0">
+                            <label for="rp-z-start">Z Start:</label><br>
+
+                            <input type="number" id="rp-tz-cut" value="1.0">
+                            <label for="rp-tz-cut">Z Cut Increment:</label><br>
+
+                            <input type="number" id="rp-z-depth" value="10.0">
+                            <label for="rp-z-depth">Total Depth of Pocket:</label><br>
+
+                            <input type="number" id="rp-x-distance" value="50.0">
+                            <label for="rp-x-distance">X Distance:</label><br>
+
+                            <input type="number" id="rp-y-distance" value="30.0">
+                            <label for="rp-y-distance">Y Distance:</label><br>
+
+                            <input type="number" id="rp-step-over" value="50.0">
+                            <label for="rp-step-over">Step Over (% of Tool Diameter):</label><br>
+
+                            <input type="number" id="rp-feed-rate" value="200.0">
+                            <label for="rp-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-rp-button" py-click="generate_rect_pocket_gcode">Generate Pocket G-code</button>
+
+                        <div id="rp-gcode-output" class="gcode-output-area">
                             <h4>Generated G-code:</h4>
                             <pre><code></code></pre>
                         </div>
