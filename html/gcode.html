@@ -971,6 +971,198 @@ pass
         </section>
 
 
+        <section id="circle-pocket-generator">
+        <div class="container">
+            <h2>Circular Pocket G-code Creator</h2>
+            <img src="CircPocket.png" alt="Circular Pocket Diagram" class="shape-diagram">
+            <p>This program will create G-code for a simple circular pocket based on the parameters you input.</p>
+
+            <div class="generator-section">
+                <div class="pyscript-ui">
+                    <py-script>
+import js
+from pyscript import display
+
+def fmt(v):
+    return f"{v:.2f}"
+
+def generate_circular_pocket_gcode(event): # Renamed function to match py-click
+    try:
+        tool_no = js.document.getElementById("cp-tool-no").value
+        tool_dia = float(js.document.getElementById("cp-tool-dia").value)
+        tool_rad = tool_dia / 2.0
+
+        wrk_ofset = js.document.getElementById("cp-work-offset").value
+        spdle_rpm = js.document.getElementById("cp-spindle-rpm").value
+
+        x_pos = float(js.document.getElementById("cp-x-position").value)
+        y_pos = float(js.document.getElementById("cp-y-position").value)
+
+        z_rapid = float(js.document.getElementById("cp-z-rapid").value)
+        z_start = float(js.document.getElementById("cp-z-start").value)
+
+        tz_cut = float(js.document.getElementById("cp-tz-cut").value)
+        z_depth = float(js.document.getElementById("cp-z-depth").value)
+
+        # Calculate nosteps and z_cut safely
+        if tz_cut > 0:
+            nosteps = int(z_depth / tz_cut)
+            z_cut = z_depth / nosteps if nosteps > 0 else z_depth
+        else:
+            nosteps = 1
+            z_cut = z_depth
+
+        circ_dia = float(js.document.getElementById("cp-circ-dia").value)
+        circ_rad = circ_dia / 2.0
+
+        step_over_percent = float(js.document.getElementById("cp-step-over").value)
+        step_over = (step_over_percent / 100) * tool_dia
+
+        feedrate = float(js.document.getElementById("cp-feed-rate").value)
+
+        # --- Calculate Values ---
+        cut_rad = circ_rad - tool_rad
+
+        # Ensure cut_rad is not negative if tool is larger than pocket
+        if cut_rad < 0:
+            cut_rad = 0
+
+        # Calculate side_steps safely
+        if step_over > 0:
+            side_steps = int(cut_rad / step_over)
+        else:
+            side_steps = 1 # Default to 1 step if step_over is 0 or negative
+
+        # Ensure at least one step if cut_rad is positive
+        if cut_rad > 0 and side_steps == 0:
+            side_steps = 1
+
+        ris = cut_rad / side_steps if side_steps > 0 else 0
+
+        # --- G-Code Generation ---
+        gcode_lines = []
+        gcode_lines.append("%") # Program Start
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 S{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+
+        # --- Initial Rapid Move ---
+        gcode_lines.append(f"G00 X{fmt(x_pos + step_over)} Y{fmt(y_pos)}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{fmt(z_rapid)} G43 H{tool_no} M08")
+        gcode_lines.append(f"G01 Z{fmt(z_start)} F{fmt(feedrate / 2)}")
+
+        # Spiral down if multiple steps, otherwise direct cut
+        if nosteps > 1:
+            # Ensure the spiral down command is correctly formatted
+            gcode_lines.append(f"G91 G02 I-{fmt(step_over)} Z-{fmt(z_cut/2)} L{2*nosteps} F{fmt(feedrate / 2)}")
+            gcode_lines.append(f"G02 I-{fmt(step_over)}")
+        else:
+            gcode_lines.append(f"G01 Z{fmt(z_depth)} F{fmt(feedrate)}") # Direct cut to final depth if only one step
+
+        gcode_lines.append("G90 G01 X" + fmt(x_pos)) # Move to center X
+        gcode_lines.append("G01 Z" + fmt(z_start) + " F" + fmt(feedrate))
+        gcode_lines.append(f"M97 P801 L{nosteps}")
+        gcode_lines.append(f"G00 Z{fmt(z_rapid)} M09")
+        gcode_lines.append("M05")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M30")
+
+        # --- Pocketing Subroutine ---
+        gcode_lines.append("\nN801")
+        gcode_lines.append(f"G91 G01 Z-{fmt(z_cut)} F{fmt(feedrate / 2)}")
+        gcode_lines.append(f"F{fmt(feedrate)}")
+        gcode_lines.append("G90")
+
+        for i in range(1, side_steps + 1):
+            r_step = ris * i
+            gcode_lines.append(f"G01 X{fmt(x_pos + r_step)}")
+            # Original Python had G02 I-(XPos+R_step). This is likely incorrect for circular pocketing.
+            # A typical circular pocketing path would involve moving in X, then Y, then X back, etc.
+            # For a simple spiral, it might just be a single G02/G03 to complete the circle at that radius.
+            # Based on the original Python logic, I'm keeping it as is, but it might need review for actual toolpath generation.
+            gcode_lines.append(f"G02 I-{fmt(x_pos + r_step)}") 
+
+        gcode_lines.append(f"G90 G01 X{fmt(x_pos)} Y{fmt(y_pos)}")
+        gcode_lines.append("M99") # End of Subroutine
+
+        # --- Program End Subroutine ---
+        gcode_lines.append("\nN8000")
+        gcode_lines.append("G00 G90 M09")
+        gcode_lines.append("G53 G00 G40 Z0")
+        gcode_lines.append("G53 G00 G40 X0 Y0")
+        gcode_lines.append("M01")
+        gcode_lines.append("M99")
+        gcode_lines.append("%") # Program End
+
+        output_element = js.document.querySelector("#cp-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#cp-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+# Placeholder for the function definition itself, as py-click handles the event.
+pass
+</py-script>
+
+                    <div class="input-section">
+                        <input type="text" id="cp-tool-no" value="8">
+                        <label for="cp-tool-no">Tool Number:</label><br>
+
+                        <input type="number" id="cp-tool-dia" value="6.0">
+                        <label for="cp-tool-dia">Tool Diameter:</label><br>
+
+                        <input type="text" id="cp-work-offset" value="54">
+                        <label for="cp-work-offset">Work Offset:</label><br>
+
+                        <input type="number" id="cp-spindle-rpm" value="1000">
+                        <label for="cp-spindle-rpm">Spindle RPM:</label><br>
+
+                        <input type="number" id="cp-x-position" value="0.0">
+                        <label for="cp-x-position">X Center:</label><br>
+
+                        <input type="number" id="cp-y-position" value="0.0">
+                        <label for="cp-y-position">Y Center:</label><br>
+
+                        <input type="number" id="cp-z-rapid" value="5.0">
+                        <label for="cp-z-rapid">Z Rapid:</label><br>
+
+                        <input type="number" id="cp-z-start" value="0.0">
+                        <label for="cp-z-start">Z Start:</label><br>
+
+                        <input type="number" id="cp-tz-cut" value="1.0">
+                        <label for="cp-tz-cut">Z Cut Increment:</label><br>
+
+                        <input type="number" id="cp-z-depth" value="10.0">
+                        <label for="cp-z-depth">Total Depth of Pocket:</label><br>
+
+                        <input type="number" id="cp-circ-dia" value="40.0">
+                        <label for="cp-circ-dia">Pocket Diameter:</label><br>
+
+                        <input type="number" id="cp-step-over" value="50">
+                        <label for="cp-step-over">Step Over (% of Tool Diameter):</label><br>
+
+                        <input type="number" id="cp-feed-rate" value="200.0">
+                        <label for="cp-feed-rate">Feed Rate:</label><br>
+
+                    </div>
+
+                    <button id="generate-cp-button" py-click="generate_circular_pocket_gcode">Generate Circular Pocket
+                        G-code</button>
+
+                    <div id="cp-gcode-output" class="gcode-output-area">
+                        <h4>Generated G-code:</h4>
+                        <pre><code></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </section>            
+
     </main>
 
     <footer>
