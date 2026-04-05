@@ -34,12 +34,13 @@
         <div class="container">
             <a href="https://bonesforge.co.uk">Home</a>
             <a href="#rectangle-generator">Rectangle</a>
-            <a href="#rectangle-g41-generator">Rectangle(G41 Offset)</a>
+            <a href="#rectangle-g41-generator">RectangleG41</a>
             <a href="#interpolation-generator">Interpolation</a>
             <a href="#hexagon-generator">Hexagon</a>
             <a href="#bolt-hole-generator">Bolt_Holes</a>
             <a href="#rectangle-pocket-generator">Rectangle_Pocket</a>
             <a href="#circle-pocket-generator">Circle_Pocket</a>
+            <a href="#corner-rectangleG41-pocket-generator">Corner_RectangleG41_Pocket</a>
         </div>
     </nav>
 
@@ -889,9 +890,9 @@ def generate_rect_pocket_gcode(event):
             current_y_offset = y_cut_inner * (i / side_steps)
             
             gcode_lines.append(f"G01 X{x_pos + current_x_offset:.2f}")
-            gcode_lines.append(f"G01 Y{y_pos - current_y_offset:.2f}")
-            gcode_lines.append(f"G01 X{x_pos - current_x_offset:.2f}")
             gcode_lines.append(f"G01 Y{y_pos + current_y_offset:.2f}")
+            gcode_lines.append(f"G01 X{x_pos - current_x_offset:.2f}")
+            gcode_lines.append(f"G01 Y{y_pos - current_y_offset:.2f}")
             gcode_lines.append(f"G01 X{x_pos + current_x_offset:.2f}")
             gcode_lines.append(f"G01 Y{y_pos:.2f}")
 
@@ -1081,11 +1082,7 @@ def generate_circular_pocket_gcode(event): # Renamed function to match py-click
         for i in range(1, side_steps + 1):
             r_step = ris * i
             gcode_lines.append(f"G01 X{fmt(x_pos + r_step)}")
-            # Original Python had G02 I-(XPos+R_step). This is likely incorrect for circular pocketing.
-            # A typical circular pocketing path would involve moving in X, then Y, then X back, etc.
-            # For a simple spiral, it might just be a single G02/G03 to complete the circle at that radius.
-            # Based on the original Python logic, I'm keeping it as is, but it might need review for actual toolpath generation.
-            gcode_lines.append(f"G02 I-{fmt(x_pos + r_step)}") 
+            gcode_lines.append(f"G03 I-{fmt(x_pos + r_step)}") 
 
         gcode_lines.append(f"G90 G01 X{fmt(x_pos)} Y{fmt(y_pos)}")
         gcode_lines.append("M99") # End of Subroutine
@@ -1163,6 +1160,231 @@ pass
         </div>
 
         </section>            
+
+        <section id="corner-rectangleG41-pocket-generator">
+            <div class="container">
+                <h2>Rectangle Pocket with radius corners and tool offset (G41) G-code Creator</h2>
+                <img src="corner-rectangleG41-pocket.png" alt="RectangleG41 Pocket Diagram" class="shape-diagram">
+                <p>This program will create G-code for a more complex rectangular pocket based on the parameters you input.</p>
+                <p>It uses G41 for cutter compensation, which means the tool will be compensated to the left of the programmed path. This is useful for ensuring the correct pocket dimensions when using a tool with a specific diameter. you can also specify corner radii, must be larger that the tool radius.</p>
+
+
+                <div class="generator-section">
+                    <div class="pyscript-ui">
+        <py-script>
+import js
+from pyscript import display
+
+def fmt(v):
+    return f"{v:.3f}"
+
+def generate_rectangleG41_pocket_gcode(event):
+    try:
+        # --- Input Parameters ---
+        tool_no = js.document.getElementById("rpg-tool-no").value
+        tool_dia = float(js.document.getElementById("rpg-tool-dia").value)
+        tool_rad = (tool_dia / 2)
+        
+        wrk_ofset = js.document.getElementById("rpg-work-offset").value
+        spdle_rpm = js.document.getElementById("rpg-spindle-rpm").value
+
+        x_pos = float(js.document.getElementById("rpg-x-position").value)
+        y_pos = float(js.document.getElementById("rpg-y-position").value)
+
+        z_rapid = float(js.document.getElementById("rpg-z-rapid").value)
+        z_start = float(js.document.getElementById("rpg-z-start").value)
+
+        tz_cut = float(js.document.getElementById("rpg-tz-cut").value)
+        z_depth = float(js.document.getElementById("rpg-z-depth").value)
+
+        nosteps = int(z_depth / tz_cut) if tz_cut > 0 else 1
+        z_cut = z_depth / nosteps if nosteps > 0 else z_depth
+
+        x_dist = float(js.document.getElementById("rpg-x-distance").value)
+        y_dist = float(js.document.getElementById("rpg-y-distance").value)
+
+        con_rad = float(js.document.getElementById("rpg-corner-radius").value)
+
+        step_over_percent = float(js.document.getElementById("rpg-step-over").value)
+        step_over = (step_over_percent / 100) * tool_dia
+
+        feedrate = float(js.document.getElementById("rpg-feed-rate").value)
+
+        # --- Calculate Values ---
+        x_cut = (x_dist / 2)
+        y_cut = (y_dist / 2)
+
+        # Replicating original Python logic for SideStep, Xcis, Ycis, ConStep
+        if x_cut > y_cut:
+            side_step = int(x_cut / step_over) if step_over > 0 else 1
+            xcis = x_cut / side_step if side_step > 0 else 0
+            ycis = y_cut / side_step if side_step > 0 else 0
+            constep = con_rad / side_step if side_step > 0 else 0
+        elif y_cut > x_cut:
+            side_step = int(y_cut / step_over) if step_over > 0 else 1
+            ycis = y_cut / side_step if side_step > 0 else 0
+            xcis = x_cut / side_step if side_step > 0 else 0
+            constep = con_rad / side_step if side_step > 0 else 0
+        else: # If x_cut == y_cut
+            side_step = int(x_cut / step_over) if step_over > 0 else 1
+            xcis = x_cut / side_step if side_step > 0 else 0
+            ycis = y_cut / side_step if side_step > 0 else 0
+            constep = con_rad / side_step if side_step > 0 else 0
+        
+        # Ensure side_step is at least 1 if dimensions are positive
+        if (x_cut > 0 or y_cut > 0) and side_step == 0:
+            side_step = 1
+            xcis = x_cut
+            ycis = y_cut
+            constep = con_rad
+            
+        xcis = float(xcis)
+        ycis = float(ycis)
+        side_step = int(side_step)
+
+        # --- G-Code Generation ---
+        gcode_lines = []
+        gcode_lines.append("%")  # Program Start
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("G21 (G21 for millimeters, G20 for inches)")
+        gcode_lines.append("M05")
+        gcode_lines.append(f"T{tool_no} M06")
+        gcode_lines.append(f"M03 S{spdle_rpm}")
+        gcode_lines.append(f"G{wrk_ofset}")
+        gcode_lines.append("G40")
+        gcode_lines.append("G98 G17")
+
+        # --- Initial Rapid Move ---
+        gcode_lines.append(f"G00 X{fmt(x_pos + step_over)} Y{fmt(y_pos)}")
+        gcode_lines.append(f"G{wrk_ofset} G00 Z{fmt(z_rapid)} G43 H{tool_no} M08")
+        gcode_lines.append(f"G01 Z{fmt(z_start)} F{fmt(feedrate / 2)}")
+        
+        # Spiral down logic from original Python
+        if nosteps > 1:
+            gcode_lines.append(f"G91 G02 I-{fmt(step_over)} Z-{fmt(z_cut/2)} L{2*nosteps} F{fmt(feedrate / 2)}")
+            gcode_lines.append(f"G02 I-{fmt(step_over)}")
+        else:
+            gcode_lines.append(f"G01 Z{fmt(z_depth)} F{fmt(feedrate)}") # Direct cut to final depth if only one step
+
+        gcode_lines.append("G90 G01 X" + fmt(x_pos))
+        gcode_lines.append("G01 Z" + fmt(z_start) + " F" + fmt(feedrate))
+        gcode_lines.append(f"M97 P901 L{nosteps}")
+        gcode_lines.append(f"G00 Z{fmt(z_rapid)} M09")
+        gcode_lines.append("M05")
+        gcode_lines.append("M97 P8000")
+        gcode_lines.append("M30")
+
+        # --- Pocketing Subroutine ---
+        gcode_lines.append("\nN901")
+        gcode_lines.append(f"G91 G01 Z-{fmt(z_cut)} F{fmt(feedrate / 2)}")
+        gcode_lines.append(f"F{fmt(feedrate)}")
+        gcode_lines.append("G90")
+
+        # Replicating original Python's pocketing loop and commands exactly
+        # Note: The original Python logic for the pocketing loop and path generation is preserved.
+        # This includes the initial G41 move and the subsequent loop.
+        
+        # Initial move for the first step with G41
+        gcode_lines.append(f"G41 D{tool_no} G01 X{fmt(x_pos + xcis)}")
+
+        # Loop for pocketing passes, starting from the second step (i=2)
+        for i in range(3, side_step + 1):
+            x_step = xcis * i
+            y_step = ycis * i
+            c_step = constep * i
+
+            gcode_lines.append(f"G01 X{fmt(x_pos + x_step)}")
+            gcode_lines.append(f"G01 Y{fmt(y_pos + y_step - c_step)}")
+            gcode_lines.append(f"G03 X{fmt(x_pos + x_step - c_step)} Y{fmt(y_pos + y_step)} I-{fmt(c_step)}")
+            gcode_lines.append(f"G01 X{fmt(x_pos - x_step + c_step)}")
+            gcode_lines.append(f"G03 X{fmt(x_pos - x_step)} Y{fmt(y_pos + y_step - c_step)} J-{fmt(c_step)}")
+            gcode_lines.append(f"G01 Y{fmt(y_pos - y_step + c_step)}")
+            gcode_lines.append(f"G03 X{fmt(x_pos - x_step + c_step)} Y{fmt(y_pos - y_step)} I+{fmt(c_step)}")
+            gcode_lines.append(f"G01 X{fmt(x_pos + x_step - c_step)}")
+            gcode_lines.append(f"G03 X{fmt(x_pos + x_step)} Y{fmt(y_pos - y_step + c_step)} J+{fmt(c_step)}")
+            gcode_lines.append(f"G01 Y{fmt(y_pos)}")
+            
+        gcode_lines.append("G90 G01 X" + fmt(x_pos) + " Y" + fmt(y_pos))
+        gcode_lines.append("G40") # Cancel tool radius compensation
+        gcode_lines.append("M99") # End of Subroutine
+
+        # --- Program End Subroutine ---
+        gcode_lines.append("\nN8000")
+        gcode_lines.append("G00 G90 M09")
+        gcode_lines.append("G53 G00 G40 Z0")
+        gcode_lines.append("G53 G00 G40 X0 Y0")
+        gcode_lines.append("M01")
+        gcode_lines.append("M99")
+        gcode_lines.append("%")  # Program End
+
+        output_element = js.document.querySelector("#rpg-gcode-output pre code")
+        output_element.innerText = "\n".join(gcode_lines)
+
+    except Exception as e:
+        output_element = js.document.querySelector("#rp-gcode-output pre code")
+        output_element.innerText = f"Error generating G-code: {str(e)}\nPlease check your input values."
+# Placeholder for the function definition itself, as py-click handles the event.
+pass
+        </py-script>
+
+                        <div class="input-section">
+                            <input type="text" id="rpg-tool-no" value="9">
+                            <label for="rpg-tool-no">Tool Number:</label><br>
+                            
+                            <input type="number" id="rpg-tool-dia" value="6.0">
+                            <label for="rpg-tool-dia">Tool Diameter:</label><br>
+                            
+                            <input type="text" id="rpg-work-offset" value="54">
+                            <label for="rpg-work-offset">Work Offset:</label><br>
+
+                            <input type="number" id="rpg-spindle-rpm" value="1000">
+                            <label for="rpg-spindle-rpm">Spindle RPM:</label><br>
+
+                            <input type="number" id="rpg-x-position" value="0.0">
+                            <label for="rpg-x-position">X Center:</label><br>
+                            
+                            <input type="number" id="rpg-y-position" value="0.0">
+                            <label for="rpg-y-position">Y Center:</label><br>
+                           
+                            <input type="number" id="rpg-z-rapid" value="5.0">
+                            <label for="rpg-z-rapid">Z Rapid:</label><br>
+                            
+                            <input type="number" id="rpg-z-start" value="0.0">
+                            <label for="rpg-z-start">Z Start:</label><br>
+                            
+                            <input type="number" id="rpg-tz-cut" value="1.0">
+                            <label for="rpg-tz-cut">Z Cut Increment:</label><br>
+                            
+                            <input type="number" id="rpg-z-depth" value="10.0">
+                            <label for="rpg-z-depth">Total Depth of Pocket:</label><br>
+                            
+                            <input type="number" id="rpg-x-distance" value="80.0">
+                            <label for="rpg-x-distance">X Distance:</label><br>
+                            
+                            <input type="number" id="rpg-y-distance" value="50.0">
+                            <label for="rpg-y-distance">Y Distance:</label><br>
+                            
+                            <input type="number" id="rpg-corner-radius" value="10.0">
+                            <label for="rpg-corner-radius">Corner Radius:</label><br>
+                            
+                            <input type="number" id="rpg-step-over" value="50.0">
+                            <label for="rpg-step-over">Step Over (% of Tool Diameter):</label><br>
+                            
+                            <input type="number" id="rpg-feed-rate" value="200.0">
+                            <label for="rpg-feed-rate">Feed Rate:</label><br>
+                        </div>
+
+                        <button id="generate-rpg-button" py-click="generate_rectangleG41_pocket_gcode">Generate RectangleG41 Pocket G-code</button>
+
+                        <div id="rpg-gcode-output" class="gcode-output-area">
+                            <h4>Generated G-code:</h4>
+                            <pre><code></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>        
+
 
     </main>
 
