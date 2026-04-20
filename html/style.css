@@ -23,8 +23,23 @@ html, body {
 }
 
 img {
-    width: 250px;
-    height: 200px;
+    width: 20%;
+    height: auto;
+}
+
+.header_image {
+    width: 95%;
+    height: auto;
+}
+
+.tam_image {
+    width: 20%;
+    height: auto;
+}
+
+.logo_image {
+    width: 40%;
+    height: auto;
 }
 
 header {
@@ -97,7 +112,6 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
 
 
 .header-content {
