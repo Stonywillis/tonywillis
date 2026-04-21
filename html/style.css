@@ -42,6 +42,14 @@ img {
     height: auto;
 }
 
+.icon_image {
+    width: 10%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 header {
     text-align: center;
     border-bottom: 3px solid #FFA500;
@@ -102,13 +110,13 @@ section h2 {
     text-align: center;
 }
 
-
 a {
     font-weight: bold;
     font-size: 1.1rem;
     color: #FFA500;
     text-decoration: none;
 }
+
 a:hover {
     text-decoration: underline;
 }
