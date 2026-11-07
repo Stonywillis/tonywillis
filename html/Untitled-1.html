@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tony Willis | CNC programmer, CAD/CAM and training</title>
+  <meta name="description" content="Tony Willis is a CNC programmer and CAD/CAM specialist with over 20 years in precision machining. Creator of the TAM-CNC G-code app and a browser-based CNC teaching platform.">
+  <meta property="og:title" content="Tony Willis | CNC programmer, CAD/CAM and training">
+  <meta property="og:description" content="Over 20 years of precision machining, G-code and CAD/CAM. Creator of the TAM-CNC app.">
+  <meta property="og:type" content="website">
+  <link id="favicon" rel="icon" type="image/png" href="AnvilOutlineLogo02small.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --steel: #E4E7E9;
+      --plate: #F2F3F4;
+      --iron: #1B1F23;
+      --muted: #4B545C;
+      --rule: #BFC5CA;
+      --ember: #B84A12;
+      --ember-deep: #8F3508;
+      --head: "Archivo", "Arial Black", system-ui, sans-serif;
+      --text: "Source Serif 4", Georgia, "Times New Roman", serif;
+      --ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body { margin: 0; background: var(--steel); color: var(--iron); font: 400 1.1875rem/1.65 var(--text); }
+    a { color: var(--ember-deep); text-underline-offset: 3px; }
+    :focus-visible { outline: 3px solid var(--ember); outline-offset: 3px; }
+    .wrap { width: min(100% - 2rem, 70rem); margin-inline: auto; }
+    .skip { position: absolute; left: -999px; top: 0; background: var(--iron); color: #fff; padding: .6rem 1rem; z-index: 10; }
+    .skip:focus { left: 0; }
+
+    /* Header */
+    .top { background: var(--plate); border-bottom: 2px solid var(--iron); }
+    .top .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 2rem; padding-block: .75rem; }
+    .brand { display: flex; align-items: center; gap: .75rem; color: var(--iron); text-decoration: none; font: 800 1.35rem/1 var(--head); font-stretch: 112%; }
+    .brand img { height: 2.75rem; width: auto; display: block; }
+    .nav { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; font: 600 1rem/1 var(--ui); }
+    .nav a { color: var(--iron); text-decoration: none; padding: .5rem 0; border-bottom: 2px solid transparent; }
+    .nav a:hover { border-bottom-color: var(--ember); }
+
+    /* Buttons */
+    .btn { display: inline-block; padding: .8rem 1.3rem; border: 2px solid var(--ember); background: var(--ember); color: #fff; font: 700 1rem/1.2 var(--ui); text-decoration: none; border-radius: 2px; cursor: pointer; }
+    .btn:hover { background: var(--ember-deep); border-color: var(--ember-deep); }
+    .btn.line { background: transparent; color: var(--iron); border-color: var(--iron); }
+    .btn.line:hover { background: var(--iron); color: #fff; }
+    .btns { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+    /* Hero */
+    .hero { padding-block: clamp(2.5rem, 7vw, 5.5rem); }
+    .hero .wrap { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 3fr); gap: 3rem; align-items: center; }
+    h1 { margin: 0 0 1.5rem; font: 800 clamp(2.3rem, 5.6vw, 4.5rem)/1.04 var(--head); font-stretch: 114%; letter-spacing: -.015em; overflow-wrap: break-word; text-wrap: balance; }
+    .lede { margin: 0 0 2rem; max-width: 38rem; font-size: 1.3rem; line-height: 1.55; }
+    .hero-mark { display: flex; justify-content: center; }
+    .hero-mark img { width: 100%; max-width: 15rem; height: auto; }
+
+    /* Sections: a ledger, label on the left and content on the right */
+    .sec { border-top: 2px solid var(--iron); padding-block: clamp(2rem, 5vw, 3.5rem); }
+    .sec.alt { background: var(--plate); }
+    .sec > .wrap > h2 { margin: 0 0 2rem; font: 800 clamp(1.7rem, 3.2vw, 2.4rem)/1.1 var(--head); font-stretch: 112%; letter-spacing: -.01em; }
+    .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: 1rem 3rem; padding-block: 1.75rem; border-top: 1px solid var(--rule); }
+    .row:first-of-type { border-top: 0; padding-top: 0; }
+    h3 { margin: 0; font: 700 1.35rem/1.2 var(--head); font-stretch: 108%; }
+    .row p { margin: 0 0 1rem; max-width: 40rem; }
+    .row p:last-child { margin-bottom: 0; }
+    .row .btns { margin-top: 1.25rem; }
+    .banner { display: block; width: 100%; max-width: 40rem; height: auto; margin: 0 0 1.25rem; border: 1px solid var(--rule); }
+
+    /* App screenshots */
+    .shots { display: flex; gap: 1rem; margin: 1.5rem 0 0; padding: 0 0 .75rem; list-style: none; overflow-x: auto; scroll-snap-type: x proximity; }
+    .shots li { flex: 0 0 auto; scroll-snap-align: start; }
+    .shots img { display: block; height: 26rem; width: auto; max-width: none; border: 1px solid var(--iron); }
+
+    /* Skills */
+    dl.skills { margin: 0; }
+    dl.skills .row { margin: 0; }
+    dl.skills dt { font: 700 1.35rem/1.2 var(--head); font-stretch: 108%; }
+    dl.skills dd { margin: 0; }
+    dl.skills ul { margin: 0; padding: 0; list-style: none; columns: 2 16rem; column-gap: 2rem; }
+    dl.skills li { break-inside: avoid; padding: .15rem 0; }
+
+    /* Forms */
+    form { max-width: 40rem; margin-top: 1.5rem; }
+    label { display: block; margin: 0 0 .25rem; font: 600 .95rem/1.3 var(--ui); }
+    input, textarea { width: 100%; padding: .7rem .8rem; border: 2px solid var(--iron); border-radius: 2px; background: #fff; color: var(--iron); font: 400 1rem/1.4 var(--ui); }
+    .field { margin-bottom: 1rem; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .small { font: 400 .95rem/1.5 var(--ui); color: var(--muted); max-width: 40rem; }
+
+    footer { background: var(--iron); color: #E4E7E9; padding-block: 2rem; font: 400 .95rem/1.6 var(--ui); }
+    footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem; }
+    footer a { color: #fff; }
+    footer p { margin: 0; }
+
+    @media (max-width: 52rem) {
+      .hero .wrap { grid-template-columns: minmax(0, 1fr); }
+      .hero-mark { display: none; }
+      .row { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 34rem) {
+      .pair { grid-template-columns: minmax(0, 1fr); }
+      .shots img { height: 22rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="AnvilOutlineLogo03.png" alt="">Tony Willis</a>
+      <nav class="nav" aria-label="Main">
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#about">About</a>
+        <a href="#cv">CV</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="wrap">
+        <div>
+          <h1>CNC programmer, CAD/CAM specialist and trainer</h1>
+          <p class="lede">I have spent more than 20 years making precision parts in university research workshops. I write G-code by hand and with CAM, and I now build tools to teach it.</p>
+          <div class="btns">
+            <a class="btn" href="#contact">Get in touch</a>
+            <a class="btn line" href="TonyWillisCV.pdf" download>Download my CV (PDF)</a>
+          </div>
+        </div>
+        <div class="hero-mark">
+          <img src="AnvilOutlineLogo03.png" alt="Bones Forge anvil logo">
+        </div>
+      </div>
+    </section>
+
+    <section class="sec alt" id="projects">
+      <div class="wrap">
+        <h2>Projects</h2>
+
+        <div class="row">
+          <h3>TAM-CNC app</h3>
+          <div>
+            <img class="banner" src="TAM-CNC-Metal-1TWBanner.png" alt="TAM-CNC logo banner">
+            <p>TAM-CNC is an Android app that generates G-code for eight CNC milling operations. It uses the simplified style I have machined with for over a decade: clean subroutines, loops and interpolation that stay short, readable and easy to change.</p>
+            <p>You fill in the variables for the operation, such as depth, diameter or step-over, and tap Generate. Change one value, generate again, and you can see straight away how the code changes. For a quick one-off it is quicker than setting up CAM or conversational programming, and it is a good way to learn how real G-code is structured.</p>
+            <p>It began as a project to learn Python by recreating the logic I use at the machine, and it follows the same idea as input-driven programs I wrote for the VQC system on a Haas ST20Y about ten years ago.</p>
+            <p>The app is in open testing on Google Play. You can join with a Google account, with no other registration.</p>
+            <div class="btns">
+              <a class="btn" href="https://play.google.com/apps/testing/com.tamcnc.app" target="_blank" rel="noopener">Join the open test</a>
+            </div>
+            <ul class="shots" aria-label="App screenshots">
+              <li><img src="Screenshot_20260404_211822_TAM-CNC.jpg" alt="TAM-CNC app screenshot 1"></li>
+              <li><img src="Screenshot_20260404_211827_TAM-CNC.png" alt="TAM-CNC app screenshot 2"></li>
+              <li><img src="Screenshot_20260404_211901_TAM-CNC.jpg" alt="TAM-CNC app screenshot 3"></li>
+              <li><img src="Screenshot_20260404_211914_TAM-CNC.png" alt="TAM-CNC app screenshot 4"></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <h3>TAM-CNC teaching platform</h3>
+          <div>
+            <p>A browser-based virtual CNC milling machine for schools and colleges. Students sign in with their institution's Microsoft account, write G-code and watch the toolpath, with nothing to install. It is in private preview.</p>
+            <p>I am also running a short survey for CNC operators and programmers as research for the platform. If you work with CNC machines, I would value your answers.</p>
+            <div class="btns">
+              <a class="btn" href="https://tam-cnc.com" target="_blank" rel="noopener">Visit tam-cnc.com</a>
+              <a class="btn line" href="https://s.surveyplanet.com/lzrgxwcn" target="_blank" rel="noopener">Take the CNC survey</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <h3>Workshop and research work</h3>
+          <div>
+            <p>In research workshops I have made turbine test rigs, material test samples and bespoke medical devices, usually one-off and to tight tolerances. Much of it is covered by research grants, so I can only show a small selection.</p>
+            <div class="btns">
+              <a class="btn line" href="projectspage.html">See selected projects</a>
+              <a class="btn line" href="https://github.com/Stonywillis" target="_blank" rel="noopener">Code on GitHub</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="skills">
+      <div class="wrap">
+        <h2>Skills</h2>
+        <dl class="skills">
+          <div class="row">
+            <dt>At the machine</dt>
+            <dd>
+              <ul>
+                <li>Haas and XYZ CNC mills and lathes</li>
+                <li>Sodick EDM</li>
+                <li>Manual machining and fabrication</li>
+                <li>Precision measurement and metrology</li>
+                <li>Laser cutting</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="row">
+            <dt>CAD and CAM</dt>
+            <dd>
+              <ul>
+                <li>SolidWorks with CAMWorks</li>
+                <li>Fusion 360</li>
+                <li>FeatureCAM</li>
+                <li>Creo and Autodesk Inventor</li>
+                <li>Reverse engineering and 3D modelling</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="row">
+            <dt>Code</dt>
+            <dd>
+              <ul>
+                <li>G-code, handwritten and from CAM</li>
+                <li>Python, for generating programs</li>
+                <li>HTML, CSS and JavaScript</li>
+                <li>Git and GitHub</li>
+                <li>Microsoft Azure Fundamentals (AZ-900)</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="row">
+            <dt>Teaching</dt>
+            <dd>
+              <ul>
+                <li>Tutoring and mentoring apprentices and students</li>
+                <li>Demonstrations on CNC machines and workshop equipment</li>
+              </ul>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="sec alt" id="about">
+      <div class="wrap">
+        <h2>About</h2>
+        <div class="row">
+          <h3>My background</h3>
+          <div>
+            <p>I started as a machine operator in 1999 and moved into university engineering workshops in 2003. Since then I have made research parts on CNC mills, lathes and EDM machines, and taught students and staff how to use the equipment safely.</p>
+            <p>G-code is the part of the job I enjoy most. I write it by hand, I generate it from CAM, and I have now built tools that generate it from a short list of inputs. I am working on a way to teach all of it in a browser.</p>
+          </div>
+        </div>
+        <div class="row">
+          <h3>Bones Forge</h3>
+          <div>
+            <p>Away from the machines I am a blacksmith and a general maker. Bones Forge is where that work lives: re-enactment clothing and kit, a custom electric guitar, and whatever I am building next.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="cv">
+      <div class="wrap">
+        <h2>CV</h2>
+        <div class="row">
+          <h3>My experience</h3>
+          <div>
+            <p>A two-page summary of my work history, skills and qualifications.</p>
+            <div class="btns">
+              <a class="btn" href="TonyWillisCV.pdf" download>Download CV (PDF)</a>
+              <a class="btn line" href="cvtw.html">View CV online</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec alt" id="contact">
+      <div class="wrap">
+        <h2>Contact</h2>
+        <div class="row">
+          <h3>Get in touch</h3>
+          <div>
+            <p>If you have a CAD, CAM or G-code question, a project, or an idea for the TAM-CNC platform, send me a message. You can also find me on <a href="https://www.linkedin.com/in/tony-willis-5a0630356" target="_blank" rel="noopener">LinkedIn</a>.</p>
+            <form action="https://formspree.io/f/xvgqorpw" method="POST">
+              <div class="pair">
+                <div class="field">
+                  <label for="name">Full name</label>
+                  <input id="name" type="text" name="name" autocomplete="name" required>
+                </div>
+                <div class="field">
+                  <label for="email">Email address</label>
+                  <input id="email" type="email" name="email" autocomplete="email" required>
+                </div>
+              </div>
+              <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="8" required></textarea>
+              </div>
+              <button class="btn" type="submit">Send message</button>
+              <p class="small">Messages reach me through Formspree, a form service.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>&copy; 2026 Tony Willis. All rights reserved.</p>
+      <p><a href="https://tam-cnc.com">tam-cnc.com</a> &nbsp; <a href="https://github.com/Stonywillis">GitHub</a> &nbsp; <a href="https://www.linkedin.com/in/tony-willis-5a0630356">LinkedIn</a></p>
+    </div>
+  </footer>
+</body>
+</html>
