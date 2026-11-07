@@ -50,6 +50,22 @@ img {
     margin-right: auto;
 }
 
+.xyz_image {
+    width: 35%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.xyz2_image {
+    width: 90%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 header {
     text-align: center;
     border-bottom: 3px solid #FFA500;
